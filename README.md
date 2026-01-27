@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center" width="100" height="100" >
   <img src="https://github.com/ExponentialML/Text-To-Video-Finetuning/assets/59846140/184f0dce-b77a-45d7-b24d-1814e5b9c314" />
   <div align="center" style="font-style: italic;" >
@@ -275,3 +276,7 @@ If you find this work interesting, consider citing the original [ModelScope Text
   year={2023}
 }
 ```
+=======
+# Text-to-Video-Finetuning-Enhanced
+An advanced text-to-video finetuning framework built on an open-source foundation, featuring configurable training, optimized pipelines, and an end-to-end inference workflow for text-conditioned video generation.
+>>>>>>> 82d484e1c5c8115d62c6139e43b3b5b8ddd97413
