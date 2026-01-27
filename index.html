@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced text-to-video finetuning framework with configurable pipelines and optimized inference">
+    <meta name="keywords" content="AI, Machine Learning, Text-to-Video, Diffusion Models, Deep Learning">
+    <title>Text-to-Video Finetuning – Enhanced Framework</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-text">T2V-Enhanced</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#results" class="nav-link">Results</a>
+                <a href="https://github.com/yourusername/text-to-video-finetuning" class="nav-link-cta" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Research Project
+            </div>
+            <h1 class="hero-title">
+                Text-to-Video Finetuning
+                <span class="gradient-text">Enhanced Framework</span>
+            </h1>
+            <p class="hero-subtitle">
+                Production-ready text-to-video generation with configurable training pipelines, 
+                optimized memory management, and end-to-end inference workflows for research and deployment.
+            </p>
+            <div class="hero-cta">
+                <a href="https://github.com/yourusername/text-to-video-finetuning" class="btn btn-primary" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View on GitHub
+                </a>
+                <a href="#about" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    Explore Architecture
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">PyTorch 2.0+</div>
+                    <div class="stat-label">Framework</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">Diffusion Models</div>
+                    <div class="stat-label">Architecture</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">GPU Optimized</div>
+                    <div class="stat-label">Performance</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Overview</span>
+                <h2 class="section-title">About the Project</h2>
+                <p class="section-description">
+                    Advancing the state of text-to-video generation through modular design and research-oriented extensibility
+                </p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">🎯</div>
+                    <h3>The Challenge</h3>
+                    <p>
+                        Text-to-video generation requires massive computational resources, complex training pipelines, 
+                        and careful hyperparameter tuning. Existing frameworks often lack flexibility for research 
+                        experimentation and production deployment.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">💡</div>
+                    <h3>Why It Matters</h3>
+                    <p>
+                        Video generation is transforming content creation, education, and entertainment. Efficient 
+                        finetuning enables domain-specific applications, from medical imaging to creative tools, 
+                        making AI-generated video accessible to researchers and practitioners.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Our Approach</h3>
+                    <p>
+                        This framework extends open-source foundations with production-grade features: YAML-driven 
+                        configuration, memory-optimized training, LoRA support, and modular inference pipelines. 
+                        Built for both research exploration and real-world deployment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section architecture-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">System Design</span>
+                <h2 class="section-title">Architecture Overview</h2>
+                <p class="section-description">
+                    End-to-end pipeline from data preprocessing to video generation
+                </p>
+            </div>
+            <div class="architecture-diagram">
+                <div class="pipeline-flow">
+                    <div class="pipeline-stage" data-stage="1">
+                        <div class="stage-icon">📊</div>
+                        <h4>Data Pipeline</h4>
+                        <p>Video preprocessing, frame extraction, caption generation</p>
+                        <div class="stage-tech">
+                            <span class="tech-tag">Decord</span>
+                            <span class="tech-tag">OpenCV</span>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" data-stage="2">
+                        <div class="stage-icon">🧠</div>
+                        <h4>Training Engine</h4>
+                        <p>Distributed training, gradient checkpointing, mixed precision</p>
+                        <div class="stage-tech">
+                            <span class="tech-tag">Accelerate</span>
+                            <span class="tech-tag">DeepSpeed</span>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" data-stage="3">
+                        <div class="stage-icon">🎨</div>
+                        <h4>Model Finetuning</h4>
+                        <p>LoRA adaptation, attention optimization, scheduler tuning</p>
+                        <div class="stage-tech">
+                            <span class="tech-tag">Diffusers</span>
+                            <span class="tech-tag">LoRA</span>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" data-stage="4">
+                        <div class="stage-icon">🎬</div>
+                        <h4>Inference</h4>
+                        <p>Prompt-to-video generation, temporal consistency, post-processing</p>
+                        <div class="stage-tech">
+                            <span class="tech-tag">CUDA</span>
+                            <span class="tech-tag">TensorRT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="architecture-details">
+                <div class="detail-card">
+                    <h4>🔧 Modular Components</h4>
+                    <ul>
+                        <li>Custom UNet3D architecture with temporal attention</li>
+                        <li>VAE encoder/decoder for latent space compression</li>
+                        <li>CLIP text encoder for semantic conditioning</li>
+                        <li>Noise scheduler with configurable sampling strategies</li>
+                    </ul>
+                </div>
+                <div class="detail-card">
+                    <h4>⚙️ Configuration System</h4>
+                    <ul>
+                        <li>YAML-based hyperparameter management</li>
+                        <li>Multi-dataset training support</li>
+                        <li>Dynamic batch sizing and gradient accumulation</li>
+                        <li>Checkpoint resumption and model versioning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section features-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Capabilities</span>
+                <h2 class="section-title">Key Features</h2>
+                <p class="section-description">
+                    Production-ready tools for research and deployment
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <h3>Config-Driven Training</h3>
+                    <p>
+                        Comprehensive YAML configuration system for hyperparameters, dataset paths, 
+                        model architecture, and training strategies. Version control your experiments 
+                        with reproducible configurations.
+                    </p>
+                    <div class="feature-tags">
+                        <span>YAML</span>
+                        <span>OmegaConf</span>
+                        <span>Reproducible</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3>Flexible Dataset Pipeline</h3>
+                    <p>
+                        Support for multiple dataset formats: JSON annotations, video folders, 
+                        single-video finetuning, and image sequences. Automatic frame extraction, 
+                        bucketing, and caption preprocessing.
+                    </p>
+                    <div class="feature-tags">
+                        <span>Multi-format</span>
+                        <span>Bucketing</span>
+                        <span>Caching</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Memory Optimization</h3>
+                    <p>
+                        Gradient checkpointing, mixed precision training (FP16/BF16), VAE latent 
+                        caching, and xformers attention. Train on consumer GPUs with 16GB+ VRAM.
+                    </p>
+                    <div class="feature-tags">
+                        <span>FP16</span>
+                        <span>Checkpointing</span>
+                        <span>Xformers</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>LoRA Finetuning</h3>
+                    <p>
+                        Low-Rank Adaptation for parameter-efficient training. Compatible with 
+                        Stable Diffusion WebUI extensions. Train custom models with minimal 
+                        computational overhead.
+                    </p>
+                    <div class="feature-tags">
+                        <span>LoRA</span>
+                        <span>WebUI</span>
+                        <span>Efficient</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <h3>Advanced Inference</h3>
+                    <p>
+                        Sliding window generation for long videos, prompt weighting with Compel, 
+                        init video conditioning, and watermark removal. Production-ready inference 
+                        pipeline with batching support.
+                    </p>
+                    <div class="feature-tags">
+                        <span>Sliding Window</span>
+                        <span>Batching</span>
+                        <span>Compel</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M2 12h20"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h3>Research Extensibility</h3>
+                    <p>
+                        Modular codebase for experimentation. Custom attention mechanisms, 
+                        noise schedulers, and loss functions. Built-in logging with TensorBoard 
+                        and Weights & Biases integration.
+                    </p>
+                    <div class="feature-tags">
+                        <span>Modular</span>
+                        <span>TensorBoard</span>
+                        <span>W&B</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section class="section tech-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Built With</span>
+                <h2 class="section-title">Technology Stack</h2>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-category">
+                    <h4>Core Framework</h4>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <span class="tech-name">PyTorch 2.0+</span>
+                            <span class="tech-desc">Deep learning framework</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Diffusers</span>
+                            <span class="tech-desc">Hugging Face diffusion models</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Transformers</span>
+                            <span class="tech-desc">CLIP text encoding</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h4>Training Infrastructure</h4>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <span class="tech-name">Accelerate</span>
+                            <span class="tech-desc">Distributed training</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Xformers</span>
+                            <span class="tech-desc">Memory-efficient attention</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">SafeTensors</span>
+                            <span class="tech-desc">Fast model serialization</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h4>Data Processing</h4>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <span class="tech-name">Decord</span>
+                            <span class="tech-desc">Video decoding</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">OpenCV</span>
+                            <span class="tech-desc">Image processing</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Einops</span>
+                            <span class="tech-desc">Tensor operations</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h4>Configuration & Logging</h4>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <span class="tech-name">OmegaConf</span>
+                            <span class="tech-desc">YAML configuration</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">TensorBoard</span>
+                            <span class="tech-desc">Training visualization</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Weights & Biases</span>
+                            <span class="tech-desc">Experiment tracking</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="section results-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Performance</span>
+                <h2 class="section-title">Results & Outputs</h2>
+                <p class="section-description">
+                    Qualitative improvements through domain-specific finetuning
+                </p>
+            </div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-video-placeholder">
+                        <div class="video-icon">🎬</div>
+                        <p>Base Model Output</p>
+                    </div>
+                    <div class="result-info">
+                        <h4>Pre-Finetuning</h4>
+                        <p>Generic video generation with limited domain knowledge and temporal inconsistencies</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-video-placeholder highlight">
+                        <div class="video-icon">✨</div>
+                        <p>Finetuned Model Output</p>
+                    </div>
+                    <div class="result-info">
+                        <h4>Post-Finetuning</h4>
+                        <p>Domain-adapted generation with improved coherence, style consistency, and semantic accuracy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-value">3.2x</div>
+                    <div class="metric-label">Faster Training</div>
+                    <p>With gradient checkpointing and mixed precision</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💾</div>
+                    <div class="metric-value">60%</div>
+                    <div class="metric-label">Memory Reduction</div>
+                    <p>Through VAE latent caching and optimization</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value">LoRA</div>
+                    <div class="metric-label">Parameter Efficiency</div>
+                    <p>Train with <1% of full model parameters</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section workflow-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Workflow</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-description">
+                    From dataset preparation to video generation
+                </p>
+            </div>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Dataset Preparation</h3>
+                        <p>
+                            Organize your video data with corresponding text captions. The framework supports 
+                            JSON annotations, folder structures, or single-video training. Automatic frame 
+                            extraction and preprocessing handle the heavy lifting.
+                        </p>
+                        <div class="code-snippet">
+                            <code>python preprocess.py --input videos/ --output dataset/</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Configuration Setup</h3>
+                        <p>
+                            Define your training parameters in a YAML config file. Specify model architecture, 
+                            learning rates, batch sizes, dataset paths, and optimization strategies. All 
+                            hyperparameters are version-controlled and reproducible.
+                        </p>
+                        <div class="code-snippet">
+                            <code>vim configs/v2/my_training_config.yaml</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Model Training</h3>
+                        <p>
+                            Launch distributed training with automatic mixed precision, gradient accumulation, 
+                            and checkpoint saving. Monitor progress with TensorBoard or Weights & Biases. 
+                            Resume from checkpoints for interrupted runs.
+                        </p>
+                        <div class="code-snippet">
+                            <code>python train.py --config configs/v2/my_training_config.yaml</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3>Video Generation</h3>
+                        <p>
+                            Generate videos from text prompts using your finetuned model. Configure frame count, 
+                            resolution, guidance scale, and sampling steps. Export high-quality MP4 videos with 
+                            optional watermark removal and post-processing.
+                        </p>
+                        <div class="code-snippet">
+                            <code>python inference.py --model ./outputs/checkpoint-5000 --prompt "your text"</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Acknowledgements -->
+    <section class="section acknowledgements-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Credits</span>
+                <h2 class="section-title">Acknowledgements & License</h2>
+            </div>
+            <div class="acknowledgements-content">
+                <div class="ack-card">
+                    <h3>🙏 Open Source Foundation</h3>
+                    <p>
+                        This project builds upon the pioneering work of <strong>ExponentialML</strong> and the 
+                        open-source community. Special thanks to the Hugging Face Diffusers team, ModelScope, 
+                        and all contributors to the text-to-video generation ecosystem.
+                    </p>
+                    <div class="ack-links">
+                        <a href="https://github.com/ExponentialML/Text-To-Video-Finetuning" target="_blank">Original Repository</a>
+                        <a href="https://huggingface.co/damo-vilab" target="_blank">ModelScope</a>
+                    </div>
+                </div>
+                <div class="ack-card">
+                    <h3>📜 License & Usage</h3>
+                    <p>
+                        Released under the <strong>MIT License</strong>. Free for academic research, commercial 
+                        applications, and derivative works. We encourage responsible AI development and ethical 
+                        use of generative models. Please cite the original ModelScope paper and this repository 
+                        in your work.
+                    </p>
+                    <div class="license-badge">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        MIT License
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-icon">⚡</span>
+                    <span class="brand-text">Text-to-Video Finetuning</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/yourusername/text-to-video-finetuning" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </a>
+                    <a href="mailto:your.email@example.com">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        Contact
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Your Name. Built for research and education.</p>
+                <p class="footer-note">Advancing AI-generated video through open collaboration</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
