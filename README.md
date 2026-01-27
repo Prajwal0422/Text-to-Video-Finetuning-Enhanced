@@ -9,6 +9,10 @@
   </div>
 </div>
 
+## Acknowledgements
+This project is based on the open-source work by ExponentialML
+and has been extended with additional features and optimizations.
+
 
 
 # Text-To-Video-Finetuning
