@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Video Enhanced Platform – Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">⚡</div>
+                <span class="app-title">T2V Enhanced</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-label">Core</div>
+                    <a href="#" class="nav-item active">Dashboard</a>
+                    <a href="#" class="nav-item">Assets</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-label">Settings</div>
+                    <a href="#" class="nav-item">Engine Config</a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="status-card">
+                    <div class="status-dot online"></div>
+                    <span id="server-status">System Operational</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-dashboard">
+            <header class="dashboard-header">
+                <h1>Generation Command Center</h1>
+                <div class="header-actions">
+                    <div class="user-badge">Senior Architect</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="control-panel">
+                    <section class="panel-section">
+                        <h3>Input Configuration</h3>
+                        <div class="input-container">
+                            <label for="prompt">Text Prompt</label>
+                            <textarea id="prompt" placeholder="Describe your vision (e.g., 'A bioluminescent ocean with neon jellyfish')..." rows="5"></textarea>
+                        </div>
+                    </section>
+
+                    <section class="panel-section">
+                        <h3>Inference Parameters</h3>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <label for="frames">Frames</label>
+                                <input type="number" id="frames" value="24" min="8" max="48">
+                            </div>
+                            <div class="setting-item">
+                                <label for="steps">Steps</label>
+                                <input type="number" id="steps" value="25" min="10" max="50">
+                            </div>
+                        </div>
+                    </section>
+
+                    <button id="generate-btn" class="primary-action">Initialize Generation</button>
+                </div>
+
+                <div class="preview-panel">
+                    <section class="panel-section full-height">
+                        <h3>Real-Time Visualization</h3>
+                        <div id="visualizer-container" class="visualizer-container">
+                            <div id="idle-view" class="visualizer-state active">
+                                <div class="empty-state-icon">🎬</div>
+                                <p>System idle. Ready for command.</p>
+                            </div>
+
+                            <div id="active-view" class="visualizer-state">
+                                <div class="process-anim">
+                                    <div class="pulse-ring"></div>
+                                    <div class="loader-ring"></div>
+                                </div>
+                                <div class="status-info">
+                                    <p id="current-status">Analyzing Prompt...</p>
+                                    <div class="progress-track">
+                                        <div id="progress-bar" class="progress-bar"></div>
+                                    </div>
+                                    <span id="progress-label">0% Complete</span>
+                                </div>
+                            </div>
+
+                            <div id="result-view" class="visualizer-state">
+                                <video id="result-video" controls loop autoplay></video>
+                                <div class="video-meta">
+                                    <span class="badge">PROD-OUTPUT</span>
+                                    <button id="new-gen-btn" class="text-btn">Clear & Restart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
