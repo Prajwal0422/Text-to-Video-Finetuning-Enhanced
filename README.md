@@ -4,13 +4,24 @@ An advanced text-to-video finetuning framework built on an open-source foundatio
 
 ---
 
-## 🚀 NEW: Integrated Generation Framework
-We have recently added a complete, standalone inference and demo framework located in the `/text_to_video` directory. This includes:
+## 🚀 NEW: Integrated Generation Frameworks
+We have recently added two complete, standalone frameworks for high-quality video generation:
+
+### 1. Standalone Generation Framework (`/text_to_video`)
+Located in the `/text_to_video` directory, this is a modular Python framework for CLI and Gradio-based generation.
 - **Clean Inference Pipeline**: Optimized for high-resolution video generation.
 - **Gradio Web Interface**: One-click demo for real-time experimentation.
 - **Modular Architecture**: Professional model loading and video processing abstractions.
 
-[Explore the Enhanced Framework →](file:///c%3A/New%20folder/Text-to-Video-Finetuning-Enhanced/text_to_video/README.md)
+[Explore the Framework →](file:///c%3A/New%20folder/Text-to-Video-Finetuning-Enhanced/text_to_video/README.md)
+
+### 2. Real-Time Production Dashboard (`/dashboard`)
+Located in the `/dashboard` directory, this is a "production-grade" platform for real-time video generation.
+- **FastAPI Backend**: Asynchronous task management for GPU workloads.
+- **WebSocket Telemetry**: Live progress streaming and status updates.
+- **Premium UI**: Modern dark-mode dashboard for professional prompt engineering.
+
+[Explore the Dashboard →](file:///c%3A/New%20folder/Text-to-Video-Finetuning-Enhanced/dashboard/README.md)
 
 ---
 
