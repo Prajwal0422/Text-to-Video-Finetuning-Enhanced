@@ -3,109 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text-to-Video Enhanced Platform – Dashboard</title>
+    <title>T2V-Enhanced | Generation Command Center</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body class="dark-theme">
-    <div class="app-layout">
+<body class="premium-theme">
+    <div class="app-shell">
+        <!-- Top Navigation Accent -->
+        <div class="top-accent-line"></div>
+
+        <!-- Left Sidebar: Identity & Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="app-logo">⚡</div>
-                <span class="app-title">T2V Enhanced</span>
-            </div>
-            <nav class="sidebar-nav">
-                <div class="nav-group">
-                    <div class="nav-label">Core</div>
-                    <a href="#" class="nav-item active">Dashboard</a>
-                    <a href="#" class="nav-item">Assets</a>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <div class="logo-inner"></div>
+                    </div>
+                    <span class="logo-text">AETHER<span>GEN</span></span>
                 </div>
-                <div class="nav-group">
-                    <div class="nav-label">Settings</div>
-                    <a href="#" class="nav-item">Engine Config</a>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <span class="nav-label">Workspace</span>
+                    <a href="#" class="nav-link active">
+                        <span class="icon">💠</span> Generation Studio
+                    </a>
+                    <a href="#" class="nav-link">
+                        <span class="icon">🎞️</span> Neural Gallery
+                    </a>
+                    <a href="#" class="nav-link">
+                        <span class="icon">💾</span> Training Vault
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <span class="nav-label">Infrastructure</span>
+                    <a href="#" class="nav-link">
+                        <span class="icon">⚙️</span> Engine Settings
+                    </a>
+                    <a href="#" class="nav-link">
+                        <span class="icon">📊</span> GPU Telemetry
+                    </a>
                 </div>
             </nav>
+
             <div class="sidebar-footer">
-                <div class="status-card">
-                    <div class="status-dot online"></div>
-                    <span id="server-status">System Operational</span>
+                <div class="system-status-card">
+                    <div class="status-header">
+                        <span class="status-dot-pulse"></span>
+                        <span id="server-status">Engine Connected</span>
+                    </div>
+                    <div class="vram-meter">
+                        <div class="vram-bar" style="width: 45%;"></div>
+                    </div>
+                    <span class="vram-label">VRAM Usage: 10.8 GB</span>
                 </div>
             </div>
         </aside>
 
-        <main class="main-dashboard">
-            <header class="dashboard-header">
-                <h1>Generation Command Center</h1>
-                <div class="header-actions">
-                    <div class="user-badge">Senior Architect</div>
+        <!-- Main Workspace Area -->
+        <main class="main-canvas">
+            <header class="workspace-header">
+                <div class="header-content">
+                    <h1 class="gradient-title">Text-to-Video Studio</h1>
+                    <p class="header-subtitle">Craft high-fidelity cinematic sequences using ZeroScope V2.5 Architecture</p>
+                </div>
+                <div class="header-user">
+                    <div class="badge-premium">PREMIUM ACCESS</div>
+                    <div class="user-avatar">PY</div>
                 </div>
             </header>
 
-            <div class="dashboard-content">
-                <div class="control-panel">
-                    <section class="panel-section">
-                        <h3>Input Configuration</h3>
-                        <div class="input-container">
-                            <label for="prompt">Text Prompt</label>
-                            <textarea id="prompt" placeholder="Describe your vision (e.g., 'A bioluminescent ocean with neon jellyfish')..." rows="5"></textarea>
+            <div class="studio-grid">
+                <!-- Center Input Section -->
+                <div class="canvas-center">
+                    <div class="glass-card prompt-card">
+                        <div class="card-header">
+                            <span class="label">NEURAL PROMPT</span>
+                            <div class="token-counter">0 / 77 Tokens</div>
                         </div>
-                    </section>
+                        <div class="input-wrapper">
+                            <textarea id="prompt" placeholder="A futuristic cyberpunk city at night, heavy rain, neon reflections, cinematic lighting, hyper-realistic, 8k..." spellcheck="false"></textarea>
+                            <div class="input-glow"></div>
+                        </div>
+                    </div>
 
-                    <section class="panel-section">
-                        <h3>Inference Parameters</h3>
-                        <div class="settings-grid">
-                            <div class="setting-item">
-                                <label for="frames">Frames</label>
-                                <input type="number" id="frames" value="24" min="8" max="48">
-                            </div>
-                            <div class="setting-item">
-                                <label for="steps">Steps</label>
-                                <input type="number" id="steps" value="25" min="10" max="50">
+                    <div class="controls-container">
+                        <div class="glass-card settings-card">
+                            <div class="card-header"><span class="label">GENERATION PARAMETERS</span></div>
+                            <div class="params-grid">
+                                <div class="param-item">
+                                    <div class="param-info">
+                                        <label for="frames">Temporal Depth</label>
+                                        <span class="value-display"><span id="frames-val">24</span> Frames</span>
+                                    </div>
+                                    <input type="range" id="frames" min="8" max="48" value="24" class="modern-slider">
+                                </div>
+                                <div class="param-item">
+                                    <div class="param-info">
+                                        <label for="steps">Denoising Steps</label>
+                                        <span class="value-display"><span id="steps-val">25</span> Steps</span>
+                                    </div>
+                                    <input type="range" id="steps" min="10" max="50" value="25" class="modern-slider">
+                                </div>
+                                <div class="param-item">
+                                    <div class="param-info">
+                                        <label for="guidance">Guidance Scale</label>
+                                        <span class="value-display">12.5</span>
+                                    </div>
+                                    <input type="range" id="guidance" min="1" max="20" value="12" class="modern-slider">
+                                </div>
+                                <div class="param-item">
+                                    <div class="param-info">
+                                        <label>Sampling Method</label>
+                                    </div>
+                                    <select class="modern-select">
+                                        <option>DDIM Scheduler</option>
+                                        <option>DPMSolver Multistep</option>
+                                        <option>Euler Ancestral</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </section>
 
-                    <button id="generate-btn" class="primary-action">Initialize Generation</button>
+                        <button id="generate-btn" class="generate-button">
+                            <span class="btn-content">
+                                <span class="btn-text">INITIALIZE SEQUENCE</span>
+                                <span class="btn-icon">✨</span>
+                            </span>
+                            <div class="btn-shimmer"></div>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="preview-panel">
-                    <section class="panel-section full-height">
-                        <h3>Real-Time Visualization</h3>
-                        <div id="visualizer-container" class="visualizer-container">
-                            <div id="idle-view" class="visualizer-state active">
-                                <div class="empty-state-icon">🎬</div>
-                                <p>System idle. Ready for command.</p>
+                <!-- Right Side: Preview & Status -->
+                <div class="canvas-right">
+                    <div class="glass-card preview-card">
+                        <div class="card-header">
+                            <span class="label">CINEMATIC VIEWPORT</span>
+                            <div class="viewport-stats">HD • 16:9 • FP16</div>
+                        </div>
+                        
+                        <div id="viewport-container" class="viewport-content">
+                            <!-- Idle State -->
+                            <div id="idle-view" class="view-state active">
+                                <div class="idle-placeholder">
+                                    <div class="scanner-line"></div>
+                                    <div class="placeholder-icon">🎞️</div>
+                                    <p>Ready to materialize your vision</p>
+                                </div>
                             </div>
 
-                            <div id="active-view" class="visualizer-state">
-                                <div class="process-anim">
-                                    <div class="pulse-ring"></div>
-                                    <div class="loader-ring"></div>
-                                </div>
-                                <div class="status-info">
-                                    <p id="current-status">Analyzing Prompt...</p>
-                                    <div class="progress-track">
-                                        <div id="progress-bar" class="progress-bar"></div>
+                            <!-- Processing State -->
+                            <div id="active-view" class="view-state">
+                                <div class="neural-processing">
+                                    <div class="orb-container">
+                                        <div class="neural-orb"></div>
+                                        <div class="neural-rings">
+                                            <span></span><span></span><span></span>
+                                        </div>
                                     </div>
-                                    <span id="progress-label">0% Complete</span>
+                                    <div class="progress-details">
+                                        <h4 id="current-status">Synthesizing Latent Frames</h4>
+                                        <div class="premium-progress">
+                                            <div id="progress-bar" class="progress-fill"></div>
+                                            <div class="progress-shimmer"></div>
+                                        </div>
+                                        <span id="progress-label" class="pct-label">0%</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div id="result-view" class="visualizer-state">
-                                <video id="result-video" controls loop autoplay></video>
-                                <div class="video-meta">
-                                    <span class="badge">PROD-OUTPUT</span>
-                                    <button id="new-gen-btn" class="text-btn">Clear & Restart</button>
+                            <!-- Result State -->
+                            <div id="result-view" class="view-state">
+                                <div class="video-wrapper">
+                                    <video id="result-video" controls loop autoplay></video>
+                                    <div class="video-overlay">
+                                        <span class="badge">AETHER-GEN V2</span>
+                                    </div>
+                                </div>
+                                <div class="action-footer">
+                                    <button id="new-gen-btn" class="secondary-btn">New Generation</button>
+                                    <button class="icon-btn">💾</button>
+                                    <button class="icon-btn">🔗</button>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </div>
+
+                    <!-- Live Log Section -->
+                    <div class="glass-card log-card">
+                        <div class="card-header"><span class="label">LIVE TELEMETRY</span></div>
+                        <div id="log-stream" class="log-stream">
+                            <div class="log-entry system">[SYSTEM] Kernel initialized. Ready for tasking.</div>
+                            <div class="log-entry info">[INFO] Model weights loaded (ZeroScope V2.5).</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Background Elements -->
+    <div class="bg-glow-orb orb-1"></div>
+    <div class="bg-glow-orb orb-2"></div>
+    
     <script src="app.js"></script>
 </body>
 </html>
