@@ -8,25 +8,28 @@ from backend.model_loader import ModelLoader
 
 logger = logging.getLogger(__name__)
 
-async def generate_video_async(prompt: str, num_frames: int = 24, num_steps: int = 25, status_callback=None):
+async def generate_video_async(prompt: str, num_frames: int = 24, num_steps: int = 25, status_callback=None, main_loop=None):
     try:
         loader = ModelLoader.get_instance()
         pipe = loader.load_model()
+        
+        # If no loop provided, try to get current (fallback)
+        if main_loop is None:
+            main_loop = asyncio.get_running_loop()
+
+        def send_status(status_obj):
+            if status_callback:
+                asyncio.run_coroutine_threadsafe(status_callback(status_obj), main_loop)
 
         def progress_callback(step, timestep, latents):
-            if status_callback:
-                progress = int((step / num_steps) * 100)
-                asyncio.run_coroutine_threadsafe(
-                    status_callback({
-                        "type": "progress",
-                        "progress": progress,
-                        "message": f"Denoising step {step}/{num_steps}..."
-                    }),
-                    asyncio.get_event_loop()
-                )
+            progress = int((step / num_steps) * 100)
+            send_status({
+                "type": "progress",
+                "progress": progress,
+                "message": f"Denoising step {step}/{num_steps}..."
+            })
 
-        if status_callback:
-            await status_callback({"type": "status", "message": "Analyzing prompt & initializing latents..."})
+        send_status({"type": "status", "message": "Analyzing prompt & initializing latents..."})
 
         result = pipe(
             prompt,
@@ -40,8 +43,7 @@ async def generate_video_async(prompt: str, num_frames: int = 24, num_steps: int
         
         video_frames = result.frames
         
-        if status_callback:
-            await status_callback({"type": "status", "message": "Encoding temporal frames to MP4..."})
+        send_status({"type": "status", "message": "Encoding temporal frames to MP4..."})
 
         video_id = str(uuid.uuid4())[:8]
         output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "outputs", "videos")
@@ -55,6 +57,5 @@ async def generate_video_async(prompt: str, num_frames: int = 24, num_steps: int
 
     except Exception as e:
         logger.error(f"Inference failure: {e}")
-        if status_callback:
-            await status_callback({"type": "error", "message": str(e)})
+        send_status({"type": "error", "message": str(e)})
         raise e

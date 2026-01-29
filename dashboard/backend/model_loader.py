@@ -31,11 +31,18 @@ class ModelLoader:
         dtype = torch.float16 if self.device == "cuda" else torch.float32
         
         try:
+            # More robust loading: let diffusers handle safetensors detection
+            # and only use fp16 if we are on CUDA
+            load_args = {
+                "torch_dtype": dtype,
+            }
+            if self.device == "cuda":
+                load_args["variant"] = "fp16"
+                load_args["use_safetensors"] = True
+            
             self.pipe = DiffusionPipeline.from_pretrained(
                 self.model_id, 
-                torch_dtype=dtype,
-                variant="fp16" if self.device == "cuda" else None,
-                use_safetensors=True
+                **load_args
             )
             self.pipe.scheduler = DPMSolverMultistepScheduler.from_config(self.pipe.scheduler.config)
             
