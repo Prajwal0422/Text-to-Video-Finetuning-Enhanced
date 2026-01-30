@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER-GEN | Premium AI Video Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-theme">
+    <!-- Top Nav -->
+    <nav class="glass-nav">
+        <div class="container">
+            <div class="brand">
+                <div class="logo-orb"></div>
+                <span class="logo-text">AETHER<span>GEN</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#demo" class="cta-link">Try Studio</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-content">
+            <div class="badge">PLATFORM v2.5 NOW LIVE</div>
+            <h1 class="hero-title">Neural Dreams <br><span class="gradient-text">Manifested in Video</span></h1>
+            <p class="hero-subtitle">The world's most optimized text-to-video framework. Build cinematic sequences in minutes, not hours.</p>
+            <div class="hero-actions">
+                <a href="#demo" class="btn btn-primary">Enter Generation Studio</a>
+                <a href="#features" class="btn btn-outline">Explore Features</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section features">
+        <div class="container">
+            <div class="section-header">
+                <span class="tag">CAPABILITIES</span>
+                <h2>Architected for Performance</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feat-card">
+                    <div class="feat-icon">⚡</div>
+                    <h3>Fast Inference</h3>
+                    <p>Optimized 3D-UNet scheduling for sub-minute latent synthesis.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">📡</div>
+                    <h3>Live Telemetry</h3>
+                    <p>Direct WebSocket streaming from the GPU denoising thread.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">💎</div>
+                    <h3>ZeroScope V2</h3>
+                    <p>Professional cinematic weights for high-fidelity temporal coherence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Studio / Demo Section -->
+    <section id="demo" class="section studio">
+        <div class="container">
+            <div class="studio-card glass">
+                <div class="studio-header">
+                    <div class="studio-badge">GENERATION STUDIO</div>
+                    <div class="engine-status"><span class="status-dot"></span> Engine Online</div>
+                </div>
+                
+                <div class="studio-body">
+                    <div class="studio-controls">
+                        <div class="input-group">
+                            <label>NEURAL PROMPT</label>
+                            <textarea id="prompt" placeholder="A futuristic cyberpunk city at night, heavy rain, neon reflections, cinematic lighting..."></textarea>
+                        </div>
+                        
+                        <div class="params-grid">
+                            <div class="param">
+                                <label>Steps: <span id="steps-val">20</span></label>
+                                <input type="range" id="steps" min="10" max="50" value="20">
+                            </div>
+                            <div class="param">
+                                <label>Frames: <span id="frames-val">12</span></label>
+                                <input type="range" id="frames" min="8" max="24" value="12">
+                            </div>
+                        </div>
+
+                        <button id="generate-btn" class="btn btn-generate">
+                            <span class="btn-text">INITIALIZE SYNTHESIS</span>
+                            <div class="btn-shimmer"></div>
+                        </button>
+                    </div>
+
+                    <div class="studio-preview">
+                        <div id="preview-container" class="preview-viewport">
+                            <!-- Idle State -->
+                            <div id="idle-view" class="state active">
+                                <div class="idle-icon">🎬</div>
+                                <p>Neural pipeline idle. Enter prompt to begin.</p>
+                            </div>
+
+                            <!-- Progress State -->
+                            <div id="progress-view" class="state">
+                                <div class="processing-orb"></div>
+                                <h4 id="status-msg">Loading Neural Weights...</h4>
+                                <div class="progress-track">
+                                    <div id="progress-bar" class="progress-fill"></div>
+                                </div>
+                                <span id="progress-pct">0%</span>
+                            </div>
+
+                            <!-- Video State -->
+                            <div id="video-view" class="state">
+                                <video id="result-video" controls loop autoplay></video>
+                                <div class="video-actions">
+                                    <button id="reset-btn" class="btn btn-sm">New Synthesis</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="f-brand">AETHER<span>GEN</span></div>
+                <div class="f-meta">Built for High-Fidelity Research & Production</div>
+                <div class="f-links">
+                    <a href="#">GitHub</a>
+                    <a href="#">Documentation</a>
+                </div>
+            </div>
+            <div class="footer-bottom">&copy; 2026 Aether-Gen AI. MIT License.</div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
