@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+websockets
+python-multipart
+torch
+torchvision
+diffusers
+transformers
+accelerate
+safetensors
+opencv-python
+imageio
+imageio-ffmpeg
+numpy
+pydantic
+aiofiles
