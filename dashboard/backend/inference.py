@@ -31,12 +31,16 @@ async def generate_video_async(prompt: str, num_frames: int = 24, num_steps: int
 
         send_status({"type": "status", "message": "Analyzing prompt & initializing latents..."})
 
+        # Adjust resolution for performance (especially on CPU)
+        gen_width = 576 if loader.device == "cuda" else 384
+        gen_height = 320 if loader.device == "cuda" else 256
+
         result = pipe(
             prompt,
             num_frames=num_frames,
             num_inference_steps=num_steps,
-            height=320,
-            width=576,
+            height=gen_height,
+            width=gen_width,
             callback=progress_callback,
             callback_steps=1
         )
