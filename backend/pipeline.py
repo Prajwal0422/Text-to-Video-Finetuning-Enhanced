@@ -21,8 +21,8 @@ def run_hybrid_pipeline(prompt, mode="fast", progress_mgr=None):
         if progress_mgr:
             progress_mgr.send_status("generating_frames", "Materializing Latent Vision...", progress=20)
         
-        # Fast mode: 1 step (Turbo). HQ mode: 4 steps.
-        steps = 1 if mode == "fast" else 4
+        # SD 1.5: Fast mode 8-10 steps. HQ mode 20-25 steps.
+        steps = 8 if mode == "fast" else 20
         image = t2i.generate(prompt, num_steps=steps)
         
         if progress_mgr:

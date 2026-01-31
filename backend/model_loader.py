@@ -15,7 +15,8 @@ class ModelLoader:
         return cls._instance
 
     def __init__(self):
-        self.model_id = "cerspense/zeroscope_v2_576w"
+        # Using ali-vilab version which is often more accessible
+        self.model_id = "ali-vilab/text-to-video-ms-1.5"
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.pipe = None
 
@@ -24,22 +25,27 @@ class ModelLoader:
             return self.pipe
 
         logger.info(f"Loading Text-to-Video engine: {self.model_id} on {self.device}")
+        
         dtype = torch.float16 if self.device == "cuda" else torch.float32
         
         try:
-            load_args = {"torch_dtype": dtype}
-            if self.device == "cuda":
-                load_args["variant"] = "fp16"
-                load_args["use_safetensors"] = True
+            from diffusers import TextToVideoSDPipeline
             
-            self.pipe = DiffusionPipeline.from_pretrained(self.model_id, **load_args)
+            # Use a very defensive loading strategy
+            self.pipe = TextToVideoSDPipeline.from_pretrained(
+                self.model_id, 
+                torch_dtype=dtype,
+                variant="fp16" if self.device == "cuda" else None
+            )
+            
             self.pipe.scheduler = DPMSolverMultistepScheduler.from_config(self.pipe.scheduler.config)
             
             if self.device == "cuda":
                 self.pipe.enable_model_cpu_offload()
-                logger.info("GPU acceleration with FP16 enabled.")
+                logger.info("GPU acceleration enabled.")
             else:
                 self.pipe.to(self.device)
+                logger.info("Running on CPU mode (Precision: Float32).")
                 
             logger.info("Model Scope engine ready.")
             return self.pipe
