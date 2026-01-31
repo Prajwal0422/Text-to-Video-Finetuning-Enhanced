@@ -6,10 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from concurrent.futures import ThreadPoolExecutor
 
-from backend.inference import generate_video
+from backend.pipeline import run_hybrid_pipeline
 from backend.progress import ProgressManager
 
-app = FastAPI(title="AETHER-GEN API")
+app = FastAPI(title="AETHER-GEN HYBRID API")
+
+# ... (middleware and setup same as before)
 
 # Setup CORS
 app.add_middleware(
@@ -49,9 +51,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
         # Offload blocking inference to thread pool
         loop = asyncio.get_event_loop()
+        mode = data.get("mode", "fast")
         video_url = await loop.run_in_executor(
             executor, 
-            lambda: generate_video(prompt, num_frames, num_steps, progress_mgr)
+            lambda: run_hybrid_pipeline(prompt, mode, progress_mgr)
         )
 
         await progress_mgr.send_complete(video_url)
