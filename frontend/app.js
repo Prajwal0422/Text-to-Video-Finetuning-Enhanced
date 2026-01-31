@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // UI Elements
     const promptInput = document.getElementById('prompt');
-    const stepsInput = document.getElementById('steps');
-    const stepsVal = document.getElementById('steps-val');
-    const framesInput = document.getElementById('frames');
-    const framesVal = document.getElementById('frames-val');
+    const modeInput = document.getElementById('mode');
+    const fpsInput = document.getElementById('fps');
+    const fpsVal = document.getElementById('fps-val');
     const generateBtn = document.getElementById('generate-btn');
     const resetBtn = document.getElementById('reset-btn');
 
@@ -28,8 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Range Listeners
-    stepsInput.addEventListener('input', (e) => stepsVal.textContent = e.target.value);
-    framesInput.addEventListener('input', (e) => framesVal.textContent = e.target.value);
+    fpsInput.addEventListener('input', (e) => fpsVal.textContent = e.target.value);
 
     // Generation Logic
     generateBtn.addEventListener('click', () => {
@@ -49,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startGeneration(prompt) {
         showState('progress');
-        statusMsg.textContent = "Connecting to Aether-Gen Engine...";
+        statusMsg.textContent = "Initializing Hybrid Fast Engine...";
         progressBar.style.width = '0%';
         progressPct.textContent = '0%';
 
@@ -60,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 prompt: prompt,
-                num_steps: parseInt(stepsInput.value),
-                num_frames: parseInt(framesInput.value)
+                mode: modeInput.value,
+                fps: parseInt(fpsInput.value)
             }));
         };
 
