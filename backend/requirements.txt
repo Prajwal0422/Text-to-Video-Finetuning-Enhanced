@@ -14,3 +14,4 @@ imageio-ffmpeg
 numpy
 pydantic
 aiofiles
+pillow
