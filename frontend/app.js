@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progress-bar');
     const progressPct = document.getElementById('progress-pct');
     const resultVideo = document.getElementById('result-video');
+    const engineStatus = document.getElementById('engine-status-text');
+
+    // Telemetry Elements
+    const gpuFill = document.querySelector('.stat-fill');
+    const gpuVal = document.querySelector('.stat-item:nth-child(1) .stat-value');
 
     // State Mapping
     const showState = (stateId) => {
@@ -48,8 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function startGeneration(prompt) {
         showState('progress');
         statusMsg.textContent = "Initializing Hybrid Fast Engine...";
+        engineStatus.textContent = "Engine: SYNTHESIZING";
         progressBar.style.width = '0%';
         progressPct.textContent = '0%';
+        
+        // Simulate GPU spike
+        if(gpuFill) gpuFill.style.width = '92%';
+        if(gpuVal) gpuVal.textContent = '92%';
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/generate`;
@@ -79,9 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (data.type === 'complete') {
                 showState('video');
                 resultVideo.src = data.video_url;
+                engineStatus.textContent = "Engine: ONLINE";
+                if(gpuFill) gpuFill.style.width = '42%';
+                if(gpuVal) gpuVal.textContent = '42%';
             } else if (data.type === 'error') {
                 alert(`Synthesis Error: ${data.message}`);
                 showState('idle');
+                engineStatus.textContent = "Engine: ERROR";
             }
         };
 
