@@ -54,16 +54,43 @@
                     </div>
                     
                     <div class="sidebar-section">
-                        <span class="section-label">TELEMETRY</span>
+                        <span class="section-label">TELEMETRY COMMANDS</span>
                         <div class="stat-item">
-                            <span class="stat-label">GPU LOAD</span>
-                            <div class="stat-bar"><div class="stat-fill" style="width: 42%;"></div></div>
-                            <span class="stat-value">42%</span>
+                            <span class="stat-label">GPU COMPUTE</span>
+                            <div class="stat-bar"><div class="stat-fill gpu-bar" style="width: 42%;"></div></div>
+                            <span class="stat-value gpu-val">42%</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">VRAM USAGE</span>
-                            <div class="stat-bar"><div class="stat-fill" style="width: 78%;"></div></div>
-                            <span class="stat-value">12.4 GB</span>
+                            <span class="stat-label">VRAM ALLOCATION</span>
+                            <div class="stat-bar"><div class="stat-fill vram-bar" style="width: 78%;"></div></div>
+                            <span class="stat-value vram-val">12.4 GB</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">NEURAL HEAT</span>
+                            <div class="stat-bar"><div class="stat-fill heat-bar" style="width: 34%;"></div></div>
+                            <span class="stat-value heat-val">34°C</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <span class="section-label">KERNEL SPECS</span>
+                        <div class="spec-grid">
+                            <div class="spec-item">
+                                <span class="spec-label">Precision</span>
+                                <span class="spec-value">FP16</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Attention</span>
+                                <span class="spec-value">SDP-Opt</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Uptime</span>
+                                <span class="spec-value">02:45:12</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Throughput</span>
+                                <span class="spec-value">1.2 it/s</span>
+                            </div>
                         </div>
                     </div>
 

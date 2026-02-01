@@ -20,8 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const engineStatus = document.getElementById('engine-status-text');
 
     // Telemetry Elements
-    const gpuFill = document.querySelector('.stat-fill');
-    const gpuVal = document.querySelector('.stat-item:nth-child(1) .stat-value');
+    const gpuFill = document.querySelector('.gpu-bar');
+    const gpuVal = document.querySelector('.gpu-val');
+    const vramFill = document.querySelector('.vram-bar');
+    const vramVal = document.querySelector('.vram-val');
+    const heatFill = document.querySelector('.heat-bar');
+    const heatVal = document.querySelector('.heat-val');
 
     // State Mapping
     const showState = (stateId) => {
@@ -57,9 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.style.width = '0%';
         progressPct.textContent = '0%';
         
-        // Simulate GPU spike
-        if(gpuFill) gpuFill.style.width = '92%';
-        if(gpuVal) gpuVal.textContent = '92%';
+        // Simulate Real-time spikes
+        if(gpuFill) gpuFill.style.width = '94%';
+        if(gpuVal) gpuVal.textContent = '94%';
+        if(vramFill) vramFill.style.width = '88%';
+        if(vramVal) vramVal.textContent = '14.2 GB';
+        if(heatFill) heatFill.style.width = '62%';
+        if(heatVal) heatVal.textContent = '62°C';
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/generate`;
@@ -90,8 +98,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 showState('video');
                 resultVideo.src = data.video_url;
                 engineStatus.textContent = "Engine: ONLINE";
+                
+                // Cooldown
                 if(gpuFill) gpuFill.style.width = '42%';
                 if(gpuVal) gpuVal.textContent = '42%';
+                if(vramFill) vramFill.style.width = '78%';
+                if(vramVal) vramVal.textContent = '12.4 GB';
+                if(heatFill) heatFill.style.width = '34%';
+                if(heatVal) heatVal.textContent = '34°C';
             } else if (data.type === 'error') {
                 alert(`Synthesis Error: ${data.message}`);
                 showState('idle');

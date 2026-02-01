@@ -1,13 +1,13 @@
 :root {
-    --bg: #0a0a0c;
-    --card-bg: rgba(25, 25, 30, 0.6);
-    --primary: #4f46e5;
-    --primary-glow: rgba(79, 70, 229, 0.4);
-    --secondary: #9333ea;
-    --text: #f8fafc;
-    --text-dim: #94a3b8;
-    --border: rgba(255, 255, 255, 0.1);
-    --glass: rgba(255, 255, 255, 0.03);
+    --bg: #020203;
+    --card-bg: rgba(10, 10, 15, 0.8);
+    --primary: #00f2ff; /* Electric Cyan */
+    --primary-glow: rgba(0, 242, 255, 0.4);
+    --secondary: #7000ff; /* Electric Violet */
+    --text: #ffffff;
+    --text-dim: #a1a1aa;
+    --border: rgba(255, 255, 255, 0.08);
+    --glass: rgba(255, 255, 255, 0.02);
 }
 
 * {
@@ -234,6 +234,38 @@ h1, h2, .logo-text {
     height: 100%;
     background: var(--primary);
     box-shadow: 0 0 10px var(--primary);
+    transition: width 0.5s ease;
+}
+
+.stat-fill.vram-bar { background: #8b5cf6; box-shadow: 0 0 10px #8b5cf6; }
+.stat-fill.heat-bar { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.spec-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.spec-label {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+}
+
+.spec-value {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .model-badge {
@@ -650,29 +682,89 @@ input[type="range"] {
 }
 
 .processing-orb {
-    width: 80px;
-    height: 80px;
-    border: 4px solid var(--primary);
-    border-top-color: transparent;
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--border);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 2rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: orbFloat 4s ease-in-out infinite;
+    margin-bottom: 3rem;
+}
+
+.processing-orb::before {
+    content: '';
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    border: 1px dashed var(--primary);
+    border-radius: 50%;
+    animation: spin 10s linear infinite;
+    opacity: 0.3;
+}
+
+.processing-orb::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--primary), 0 0 60px var(--primary);
+}
+
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.05); }
 }
 
 .progress-track {
-    width: 300px;
-    height: 6px;
-    background: var(--border);
-    border-radius: 10px;
-    margin: 1.5rem 0 0.5rem;
-    overflow: hidden;
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 2rem 0 1rem;
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
 }
 
 .progress-fill {
     width: 0%;
     height: 100%;
-    background: var(--primary);
-    transition: 0.3s;
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    box-shadow: 0 0 20px var(--primary-glow);
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 3px;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: -4px;
+    bottom: -4px;
+    width: 4px;
+    background: #fff;
+    box-shadow: 0 0 15px #fff, 0 0 30px var(--primary);
+    border-radius: 2px;
+}
+
+/* Add segment lines to track */
+.progress-track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.05) 95%);
+    background-size: 10% 100%;
+    pointer-events: none;
 }
 
 video {
