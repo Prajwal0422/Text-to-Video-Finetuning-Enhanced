@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aether-Gen: The next generation of text-to-video diffusion frameworks.">
+    <title>AETHER-GEN | Next-Gen Video Synthesis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body class="landing-theme">
+    <!-- Navbar -->
+    <nav class="glass-nav">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="brand-logo">
+                    <div class="logo-inner"></div>
+                </div>
+                <span class="brand-name">AETHER<span>GEN</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#architecture" class="link-item">Architecture</a>
+                <a href="#features" class="link-item">Framework</a>
+                <a href="/frontend/index.html" class="link-cta">Launch Studio</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-bg">
+            <div class="orb orb-primary"></div>
+            <div class="orb orb-secondary"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="badge-elite">ENTERPRISE FRAMEWORK 2.5</div>
+            <h1 class="hero-title">
+                The Future of <br>
+                <span class="gradient-text">Neural Video Synthesis</span>
+            </h1>
+            <p class="hero-subtitle">
+                A production-grade text-to-video framework optimized for high-fidelity generation, 
+                temporal coherence, and real-time inference telemetry.
+            </p>
+            <div class="hero-actions">
+                <a href="/frontend/index.html" class="btn btn-premium">Enter Generation Studio</a>
+                <a href="#architecture" class="btn btn-outline">Technical Specs</a>
+            </div>
+            <div class="hero-metrics">
+                <div class="metric">
+                    <span class="m-val">3.2x</span>
+                    <span class="m-label">VRAM Efficiency</span>
+                </div>
+                <div class="metric">
+                    <span class="m-val">FP16</span>
+                    <span class="m-label">Precision Engine</span>
+                </div>
+                <div class="metric">
+                    <span class="m-val">100%</span>
+                    <span class="m-label">Open Source</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Architecture -->
+    <section id="architecture" class="section architecture">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">ENGINEERING</span>
+                <h2 class="section-title">High-Performance Architecture</h2>
+                <p>Decoupled inference engine with real-time WebSocket progress streaming.</p>
+            </div>
+            <div class="arch-grid">
+                <div class="arch-card">
+                    <div class="arch-icon">🧠</div>
+                    <h3>ZeroScope V2.5</h3>
+                    <p>Optimized 3D-UNet architecture with enhanced temporal attention layers for fluid motion.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">⚡</div>
+                    <h3>FastAPI Stream</h3>
+                    <p>Asynchronous task management allows the UI to stay responsive during heavy GPU workloads.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">🛰️</div>
+                    <h3>Live Telemetry</h3>
+                    <p>Real-time progress broadcasting via high-frequency WebSocket channels.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section features">
+        <div class="container">
+            <div class="features-split">
+                <div class="features-text">
+                    <span class="section-tag">CAPABILITIES</span>
+                    <h2 class="section-title">Advanced Framework Features</h2>
+                    <ul class="feature-list">
+                        <li>
+                            <strong>Mixed Precision (FP16/BF16)</strong>
+                            <p>Optimized for modern NVIDIA architectures to reduce memory footprint by 50%.</p>
+                        </li>
+                        <li>
+                            <strong>Sliding Window Inference</strong>
+                            <p>Generate extended sequences through temporal frame overlapping.</p>
+                        </li>
+                        <li>
+                            <strong>LoRA Support</strong>
+                            <p>Inject custom styles and characters with parameter-efficient fine-tuning.</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="features-visual">
+                    <div class="code-window">
+                        <div class="window-header">
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        </div>
+                        <pre><code># Initialize Synthesis
+pipeline = DiffusionPipeline.from_pretrained(
+    "AETHER-GEN-V2",
+    torch_dtype=torch.float16,
+    variant="fp16"
+)
+
+# Launch Inference
+video = pipeline(
+    prompt="A neon city in rain",
+    num_frames=24,
+    guidance_scale=12.5
+)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="f-brand">
+                    <span class="brand-name">AETHER<span>GEN</span></span>
+                </div>
+                <div class="f-links">
+                    <a href="mailto:architect@aether-gen.ai">Contact</a>
+                    <a href="/frontend/index.html">Studio</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aether-Gen Framework. Distributed under MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
