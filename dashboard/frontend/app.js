@@ -1,5 +1,5 @@
 /**
- * AETHER-GEN CORE ENGINE INTERFACE
+ * NEXUS VISION CORE ENGINE INTERFACE
  * Handles WebSocket communication, UI state management, and real-time telemetry.
  */
 

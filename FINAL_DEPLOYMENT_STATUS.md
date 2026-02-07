@@ -35,7 +35,7 @@ Text-to-Video-Finetuning-Enhanced/
 ├── models/
 ├── stable_lora/
 ├── utils/
-├── index.html (current - Aether-Gen)
+├── index.html (current - NEXUS VISION)
 ├── index_enhanced.html ⭐ NEW ENHANCED VERSION
 ├── styles.css (current)
 ├── styles_enhanced.css ⭐ NEW ENHANCED STYLES
@@ -75,7 +75,7 @@ Text-to-Video-Finetuning-Enhanced/
 **URL**: `https://prajwal0422.github.io/Text-to-Video-Finetuning-Enhanced/`
 
 **Features**:
-- Current Aether-Gen themed version
+- Current NEXUS VISION themed version
 - Different design approach
 
 ## 🚀 Next Steps to Go Live
@@ -108,7 +108,7 @@ git push origin main
 **Result**: Enhanced version at `https://prajwal0422.github.io/Text-to-Video-Finetuning-Enhanced/`
 
 #### Option B: Keep Both Versions (Current Setup)
-- **Main page**: Current Aether-Gen version
+- **Main page**: Current NEXUS VISION version
 - **Enhanced page**: `/index_enhanced.html`
 
 **No action needed** - both are already accessible!
@@ -126,7 +126,7 @@ Add links to both versions in your README.md:
 ## 📊 What You Have Now
 
 ### ✅ Two Complete Websites
-1. **Current (Aether-Gen themed)**
+1. **Current (NEXUS VISION themed)**
    - Modern design
    - Different branding
    - Already on GitHub

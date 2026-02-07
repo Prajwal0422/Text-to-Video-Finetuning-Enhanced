@@ -1,5 +1,5 @@
 // ===================================
-// AETHER-GEN INTERACTIVE LOGIC
+// NEXUS VISION INTERACTIVE LOGIC
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {

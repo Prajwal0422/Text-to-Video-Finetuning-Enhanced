@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from backend.pipeline import run_hybrid_pipeline
 from backend.progress import ProgressManager
 
-app = FastAPI(title="AETHER-GEN HYBRID API")
+app = FastAPI(title="NEXUS VISION API")
 
 # ... (middleware and setup same as before)
 

@@ -160,8 +160,8 @@ git push origin main
 ```
 
 ### Option 3: Keep Both Versions
-- **Original**: `index.html` (Aether-Gen version)
-- **Enhanced**: `index_enhanced.html` (Text-to-Video version)
+- **Original**: `index.html` (NEXUS VISION version)
+- **Enhanced**: `index_enhanced.html` (NEXUS VISION Enhanced version)
 - Access enhanced at: `https://prajwal0422.github.io/Text-to-Video-Finetuning-Enhanced/index_enhanced.html`
 
 ## 🎯 Key Features
