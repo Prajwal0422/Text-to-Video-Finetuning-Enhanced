@@ -3,287 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS VISION | Premium AI Video Platform</title>
+    <title>NEXUS VISION | AI Video Generation Platform</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body class="premium-theme">
-    <!-- Top Nav -->
-    <nav class="glass-nav">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="container">
-            <div class="brand">
-                <div class="logo-orb"></div>
-                <span class="logo-text">AETHER<span>GEN</span></span>
+            <div class="nav-brand">
+                <div class="brand-icon">⚡</div>
+                <span class="brand-text">NEXUS<span class="accent">VISION</span></span>
             </div>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#demo" class="cta-link">Try Studio</a>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#dashboard" class="nav-link">Dashboard</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="https://github.com/Prajwal0422/Text-to-Video-Finetuning-Enhanced" class="nav-link" target="_blank">GitHub</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero & Studio Combined Command Center -->
-    <section id="demo" class="hero-studio-container">
-        <div class="hero-bg-effects">
-            <div class="glow-orb orb-1"></div>
-            <div class="glow-orb orb-2"></div>
-            <div class="neural-network-grid"></div>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+            <div class="grid-overlay"></div>
         </div>
-
+        
         <div class="container hero-content">
-            <div class="badge-row">
-                <span class="badge premium">PREMIUM ACCESS</span>
-                <span class="badge version">v2.5 NEURAL ENGINE</span>
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>AI-Powered Video Generation</span>
             </div>
-            <h1 class="hero-title">Neural Dreams <br><span class="gradient-text">Manifested in Video</span></h1>
-            <p class="hero-subtitle">The world's most optimized text-to-video framework. Build cinematic sequences with the power of NEXUS VISION.</p>
+            
+            <h1 class="hero-title">
+                Transform Text Into
+                <span class="gradient-text">Cinematic Video</span>
+            </h1>
+            
+            <p class="hero-description">
+                NEXUS VISION combines cutting-edge AI with lightning-fast processing to generate 
+                high-quality videos from text prompts in seconds. Experience the future of content creation.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="#dashboard" class="btn btn-primary">
+                    <span>Launch Dashboard</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <span>Explore Features</span>
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">< 10s</div>
+                    <div class="stat-label">Generation Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1080p</div>
+                    <div class="stat-label">HD Quality</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">60 FPS</div>
+                    <div class="stat-label">Smooth Motion</div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="container studio-wrapper">
-            <div class="studio-card glass mega-studio">
-                <!-- Sidebar: System Stats -->
-                <aside class="studio-sidebar">
-                    <div class="sidebar-section">
-                        <span class="section-label">SYSTEM STATUS</span>
-                        <div class="status-indicator">
-                            <span class="pulse-dot"></span>
-                            <span id="engine-status-text">Engine: ONLINE</span>
+    <!-- Dashboard Hero Section -->
+    <section id="dashboard" class="dashboard-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Generation Dashboard</h2>
+                <p class="section-subtitle">Create stunning videos with AI-powered text-to-video generation</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Main Generation Panel -->
+                <div class="dashboard-card main-panel">
+                    <div class="card-header">
+                        <h3>Video Generator</h3>
+                        <div class="status-badge">
+                            <span class="status-dot active"></span>
+                            <span>Ready</span>
                         </div>
                     </div>
                     
-                    <div class="sidebar-section">
-                        <span class="section-label">TELEMETRY COMMANDS</span>
-                        <div class="stat-item">
-                            <span class="stat-label">GPU COMPUTE</span>
-                            <div class="stat-bar"><div class="stat-fill gpu-bar" style="width: 42%;"></div></div>
-                            <span class="stat-value gpu-val">42%</span>
+                    <div class="generation-form">
+                        <div class="form-group">
+                            <label for="prompt">Enter Your Prompt</label>
+                            <textarea 
+                                id="prompt" 
+                                placeholder="Describe the video you want to create... e.g., 'A serene sunset over mountains with flowing clouds'"
+                                rows="4"
+                            ></textarea>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">VRAM ALLOCATION</span>
-                            <div class="stat-bar"><div class="stat-fill vram-bar" style="width: 78%;"></div></div>
-                            <span class="stat-value vram-val">12.4 GB</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">NEURAL HEAT</span>
-                            <div class="stat-bar"><div class="stat-fill heat-bar" style="width: 34%;"></div></div>
-                            <span class="stat-value heat-val">34°C</span>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-section">
-                        <span class="section-label">KERNEL SPECS</span>
-                        <div class="spec-grid">
-                            <div class="spec-item">
-                                <span class="spec-label">Precision</span>
-                                <span class="spec-value">FP16</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Attention</span>
-                                <span class="spec-value">SDP-Opt</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Uptime</span>
-                                <span class="spec-value">02:45:12</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Throughput</span>
-                                <span class="spec-value">1.2 it/s</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-section">
-                        <span class="section-label">ACTIVE MODEL</span>
-                        <div class="model-badge">
-                            <span class="icon">💎</span>
-                            <span class="name">ZeroScope V2.5</span>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-footer">
-                        <div class="connection-speed">
-                            <span class="label">WS Latency</span>
-                            <span class="value">12ms</span>
-                        </div>
-                    </div>
-                </aside>
-
-                <!-- Main Studio Core -->
-                <div class="studio-main-core">
-                    <div class="studio-header">
-                        <div class="studio-badge">GENERATION STUDIO COMMAND CENTER</div>
-                        <div class="viewport-controls">
-                            <span class="ctrl">HD</span>
-                            <span class="ctrl">16:9</span>
-                            <span class="ctrl">FP16</span>
-                        </div>
-                    </div>
-                    
-                    <div class="studio-body">
-                        <div class="studio-controls">
-                            <div class="input-group">
-                                <label>NEURAL PROMPT COMMAND</label>
-                                <div class="textarea-wrapper">
-                                    <textarea id="prompt" placeholder="Describe the cinematic sequence you wish to materialize..."></textarea>
-                                    <div class="shimmer-border"></div>
-                                </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mode">Generation Mode</label>
+                                <select id="mode">
+                                    <option value="fast">Fast Mode (< 10s)</option>
+                                    <option value="quality">Quality Mode (< 30s)</option>
+                                </select>
                             </div>
                             
-                            <div class="params-container">
-                                <div class="params-header">ENGINE PARAMETERS</div>
-                                <div class="params-grid">
-                                    <div class="param">
-                                        <div class="param-info">
-                                            <label>GEN MODE</label>
-                                            <span class="info-icon">ℹ️</span>
-                                        </div>
-                                        <select id="mode" class="modern-select">
-                                            <option value="fast">FAST (Sub-10s)</option>
-                                            <option value="hq">HQ (Neural+)</option>
-                                        </select>
-                                    </div>
-                                    <div class="param">
-                                        <div class="param-info">
-                                            <label>TEMPORAL FPS</label>
-                                            <span id="fps-val">24</span>
-                                        </div>
-                                        <input type="range" id="fps" min="12" max="60" value="24" class="modern-slider">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="duration">Duration</label>
+                                <select id="duration">
+                                    <option value="4">4 seconds</option>
+                                    <option value="8" selected>8 seconds</option>
+                                    <option value="12">12 seconds</option>
+                                </select>
                             </div>
-
-                            <button id="generate-btn" class="btn btn-generate mega-btn">
-                                <div class="btn-background"></div>
-                                <span class="btn-text">INITIALIZE NEURAL SYNTHESIS</span>
-                                <span class="btn-icon">✨</span>
+                        </div>
+                        
+                        <button id="generateBtn" class="btn btn-generate">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <span>Generate Video</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Progress Section -->
+                    <div id="progressSection" class="progress-section" style="display: none;">
+                        <div class="progress-header">
+                            <span id="progressStatus">Initializing...</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span id="progressStep">Starting generation...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Result Section -->
+                    <div id="resultSection" class="result-section" style="display: none;">
+                        <div class="result-header">
+                            <h4>Generated Video</h4>
+                            <button id="downloadBtn" class="btn btn-small">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                </svg>
+                                Download
                             </button>
                         </div>
+                        <div class="video-container">
+                            <video id="resultVideo" controls loop autoplay></video>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="studio-preview">
-                            <div id="preview-container" class="preview-viewport">
-                                <!-- Idle State -->
-                                <div id="idle-view" class="state active">
-                                    <div class="neural-scanner"></div>
-                                    <div class="idle-content">
-                                        <div class="idle-icon-wrapper">
-                                            <span class="idle-icon">🎬</span>
-                                            <div class="icon-rings"></div>
-                                        </div>
-                                        <p>Neural pipeline idle. Ready for instruction.</p>
-                                    </div>
+                <!-- Sidebar Stats -->
+                <div class="dashboard-sidebar">
+                    <div class="dashboard-card stats-card">
+                        <h3>System Status</h3>
+                        <div class="stats-list">
+                            <div class="stat-row">
+                                <span class="stat-icon">🚀</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">Server</div>
+                                    <div class="stat-status online">Online</div>
                                 </div>
-
-                                <!-- Progress State -->
-                                <div id="progress-view" class="state">
-                                    <div class="neural-orb-container">
-                                        <div class="processing-orb"></div>
-                                        <div class="orb-aura"></div>
-                                    </div>
-                                    <h4 id="status-msg">Allocating VRAM...</h4>
-                                    <div class="progress-container">
-                                        <div class="progress-track">
-                                            <div id="progress-bar" class="progress-fill"></div>
-                                        </div>
-                                        <span id="progress-pct">0%</span>
-                                    </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">⚡</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">GPU</div>
+                                    <div class="stat-status">Available</div>
                                 </div>
-
-                                <!-- Video State -->
-                                <div id="video-view" class="state">
-                                    <div class="video-wrapper">
-                                        <video id="result-video" controls loop autoplay></video>
-                                        <div class="video-overlay">
-                                            <span class="overlay-badge">NEXUS VISION OUTPUT</span>
-                                        </div>
-                                    </div>
-                                    <div class="video-actions">
-                                        <button id="reset-btn" class="btn btn-sm action-btn">New Synthesis</button>
-                                        <button class="btn btn-sm action-btn secondary">Save Sequence</button>
-                                    </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">🎬</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">Queue</div>
+                                    <div class="stat-status">0 pending</div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="dashboard-card tips-card">
+                        <h3>Pro Tips</h3>
+                        <ul class="tips-list">
+                            <li>Be specific with your descriptions</li>
+                            <li>Include motion keywords (flowing, moving, etc.)</li>
+                            <li>Fast mode for quick previews</li>
+                            <li>Quality mode for final renders</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Tech Stack Section -->
-    <section class="section tech-stack">
+    <!-- Features Section -->
+    <section id="features" class="features-section">
         <div class="container">
-            <div class="section-header center">
-                <span class="tag">INFRASTRUCTURE</span>
-                <h2>Powered by Neural Excellence</h2>
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need for professional video generation</p>
             </div>
-            <div class="tech-grid">
-                <div class="tech-item" style="--delay: 0s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper py">
-                            <span class="tech-icon">🐍</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>FastAPI</h4>
-                            <p>High-performance Python orchestration layer.</p>
-                        </div>
-                    </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Generate videos in under 10 seconds with our optimized pipeline</p>
                 </div>
-                <div class="tech-item" style="--delay: 0.1s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper pt">
-                            <span class="tech-icon">🔥</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>PyTorch</h4>
-                            <p>Deep learning backbone for diffusion synthesis.</p>
-                        </div>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>High Quality</h3>
+                    <p>1080p HD output with smooth 60 FPS motion</p>
                 </div>
-                <div class="tech-item" style="--delay: 0.2s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper hf">
-                            <span class="tech-icon">🤗</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>Hugging Face</h4>
-                            <p>World-class weights and model distribution.</p>
-                        </div>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced diffusion models for realistic results</p>
                 </div>
-                <div class="tech-item" style="--delay: 0.3s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper cv">
-                            <span class="tech-icon">👁️</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>OpenCV</h4>
-                            <p>Cinematic motion and temporal transforms.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="tech-item" style="--delay: 0.4s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper ws">
-                            <span class="tech-icon">⚡</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>WebSocket</h4>
-                            <p>Bi-directional real-time telemetry streaming.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="tech-item" style="--delay: 0.5s">
-                    <div class="tech-card">
-                        <div class="tech-icon-wrapper ui">
-                            <span class="tech-icon">🎨</span>
-                        </div>
-                        <div class="tech-info">
-                            <h4>Modern CSS</h4>
-                            <p>GPU-accelerated premium glassmorphism UI.</p>
-                        </div>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Easy to Use</h3>
+                    <p>Simple interface, powerful results</p>
                 </div>
             </div>
         </div>
@@ -293,14 +247,15 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="f-brand">AETHER<span>GEN</span></div>
-                <div class="f-meta">Built for High-Fidelity Research & Production</div>
-                <div class="f-links">
-                    <a href="#">GitHub</a>
-                    <a href="#">Documentation</a>
+                <div class="footer-brand">
+                    <div class="brand-icon">⚡</div>
+                    <span class="brand-text">NEXUS<span class="accent">VISION</span></span>
                 </div>
+                <p class="footer-text">Transforming imagination into reality</p>
             </div>
-            <div class="footer-bottom">&copy; 2026 NEXUS VISION AI. MIT License.</div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 NEXUS VISION. Built with AI.</p>
+            </div>
         </div>
     </footer>
 
