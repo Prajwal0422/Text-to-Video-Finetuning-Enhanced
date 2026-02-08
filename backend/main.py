@@ -6,8 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from concurrent.futures import ThreadPoolExecutor
 
-from backend.pipeline import run_hybrid_pipeline
-from backend.progress import ProgressManager
+from pipeline import run_hybrid_pipeline
+from progress import ProgressManager
 
 app = FastAPI(title="NEXUS VISION API")
 
@@ -25,14 +25,14 @@ app.add_middleware(
 executor = ThreadPoolExecutor(max_workers=1)
 
 # Serve Static Files
-PROJECT_ROOT = os.getcwd()
+PROJECT_ROOT = os.path.dirname(os.getcwd())  # Go up one level from backend to project root
 app.mount("/frontend", StaticFiles(directory=os.path.join(PROJECT_ROOT, "frontend"), html=True), name="frontend")
 app.mount("/outputs", StaticFiles(directory=os.path.join(PROJECT_ROOT, "outputs")), name="outputs")
 
 @app.get("/")
-async def redirect_to_frontend():
+async def redirect_to_home():
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/frontend/index.html")
+    return RedirectResponse(url="/frontend/home.html")
 
 @app.websocket("/ws/generate")
 async def websocket_endpoint(websocket: WebSocket):

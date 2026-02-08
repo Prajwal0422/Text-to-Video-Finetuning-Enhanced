@@ -3,7 +3,7 @@ import uuid
 import torch
 import logging
 from diffusers.utils import export_to_video
-from backend.model_loader import ModelLoader
+from model_loader import ModelLoader
 
 logger = logging.getLogger(__name__)
 

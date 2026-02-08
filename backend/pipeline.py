@@ -2,8 +2,8 @@ import os
 import uuid
 import logging
 import time
-from backend.text_to_image import T2IEngine
-from backend.image_to_video import MotionEngine
+from text_to_image import T2IEngine
+from image_to_video import MotionEngine
 
 logger = logging.getLogger(__name__)
 
