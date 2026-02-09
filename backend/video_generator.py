@@ -7,7 +7,16 @@ import time
 from typing import Dict, Optional
 from script_generator import ScriptGenerator
 from clip_fetcher import ClipFetcher
-from video_editor import VideoEditor
+
+# Try to import moviepy-based editor, fallback to simple editor
+try:
+    from video_editor import VideoEditor
+    MOVIEPY_AVAILABLE = True
+except ImportError:
+    from simple_video_editor import VideoEditor
+    MOVIEPY_AVAILABLE = False
+    print("⚠️  MoviePy not installed. Using placeholder mode.")
+    print("   Install with: pip install moviepy")
 
 class VideoGenerator:
     def __init__(self, pexels_api_key: Optional[str] = None):

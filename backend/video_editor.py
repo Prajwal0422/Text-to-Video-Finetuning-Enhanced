@@ -4,14 +4,14 @@ Video Editor - Combines clips, adds transitions and text overlays
 
 import os
 from typing import List, Optional
-from moviepy.editor import (
+from moviepy import (
     VideoFileClip, 
     concatenate_videoclips, 
     TextClip, 
     CompositeVideoClip,
-    ColorClip
+    ColorClip,
+    vfx
 )
-from moviepy.video.fx.all import fadein, fadeout
 import uuid
 
 class VideoEditor:
@@ -57,11 +57,10 @@ class VideoEditor:
                 clip = clip.subclip(0, target_duration)
             
             # Resize to standard resolution
-            clip = clip.resize(height=720)
+            clip = clip.resized(height=720)
             
             # Add fade effects
-            clip = fadein(clip, self.transition_duration)
-            clip = fadeout(clip, self.transition_duration)
+            clip = clip.with_effects([vfx.FadeIn(self.transition_duration), vfx.FadeOut(self.transition_duration)])
             
             return clip
             
