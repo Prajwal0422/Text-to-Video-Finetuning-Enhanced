@@ -1,5 +1,6 @@
 """
 Optimized Clip Fetcher - Fast parallel downloads with caching
+FIXED: Proper streaming download to prevent 0-second videos
 """
 
 import os
@@ -20,12 +21,11 @@ class ClipFetcher:
         os.makedirs(self.cache_dir, exist_ok=True)
         
         # Performance settings
-        self.request_timeout = 8  # 8 second timeout for API calls
-        self.download_timeout = 15  # 15 second timeout for downloads
-        self.max_workers = 3  # Parallel downloads
-        self.max_file_size = 10 * 1024 * 1024  # 10MB max per clip
+        self.request_timeout = 8
+        self.download_timeout = 30  # Increased for full download
+        self.max_workers = 3
+        self.max_file_size = 10 * 1024 * 1024  # 10MB max
         
-        # Cache lock for thread safety
         self.cache_lock = threading.Lock()
     
     def _get_cache_key(self, keyword: str) -> str:
@@ -37,17 +37,18 @@ class ClipFetcher:
         cache_key = self._get_cache_key(keyword)
         cache_pattern = os.path.join(self.cache_dir, f"{cache_key}_*.mp4")
         
-        # Find cached files
         import glob
         cached_files = glob.glob(cache_pattern)
         
         if cached_files and os.path.exists(cached_files[0]):
-            print(f"✅ Using cached clip for: {keyword}")
-            return cached_files[0]
+            # Verify file is not empty
+            if os.path.getsize(cached_files[0]) > 1000:  # At least 1KB
+                print(f"✅ Using cached clip for: {keyword}")
+                return cached_files[0]
         return None
     
     def search_videos(self, keyword: str, per_page: int = 3) -> List[Dict]:
-        """Search for videos with timeout and small resolution preference"""
+        """Search for videos with timeout"""
         if not self.api_key:
             print("⚠️  No Pexels API key. Using fallback.")
             return []
@@ -57,14 +58,14 @@ class ClipFetcher:
                 'query': keyword,
                 'per_page': per_page,
                 'orientation': 'landscape',
-                'size': 'small'  # Prefer smaller files
+                'size': 'small'
             }
             
             response = requests.get(
                 self.base_url,
                 headers=self.headers,
                 params=params,
-                timeout=self.request_timeout  # TIMEOUT: 8 seconds
+                timeout=self.request_timeout
             )
             
             if response.status_code == 200:
@@ -82,39 +83,42 @@ class ClipFetcher:
             return []
     
     def _select_smallest_video(self, video_files: List[Dict]) -> Optional[Dict]:
-        """Select smallest resolution video (width <= 640 preferred)"""
+        """Select smallest resolution video"""
         if not video_files:
             return None
         
-        # Filter for small videos first
+        # Filter for small videos
         small_videos = [vf for vf in video_files if vf.get('width', 9999) <= 640]
         
         if small_videos:
-            # Sort by file size (smallest first)
             small_videos.sort(key=lambda x: x.get('width', 9999) * x.get('height', 9999))
             return small_videos[0]
         
-        # Fallback: get smallest available
+        # Fallback
         video_files.sort(key=lambda x: x.get('width', 9999) * x.get('height', 9999))
         return video_files[0]
     
     def download_clip(self, video_url: str, keyword: str) -> Optional[str]:
-        """Download a video clip with timeout and size limit"""
+        """
+        ✅ FIXED: Proper streaming download
+        Downloads complete video file using streaming
+        """
         try:
             cache_key = self._get_cache_key(keyword)
             filename = f"{cache_key}_{keyword[:20]}.mp4"
             filepath = os.path.join(self.cache_dir, filename)
             
-            # Skip if already exists
-            if os.path.exists(filepath):
+            # Skip if already exists and valid
+            if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
+                print(f"✅ Using existing: {keyword}")
                 return filepath
             
             print(f"📥 Downloading: {keyword}")
             
-            # Stream download with timeout
+            # ✅ PROPER STREAMING DOWNLOAD
             response = requests.get(
                 video_url, 
-                stream=True, 
+                stream=True,  # Enable streaming
                 timeout=self.download_timeout
             )
             
@@ -128,25 +132,40 @@ class ClipFetcher:
                 print(f"⚠️  File too large ({content_length / 1024 / 1024:.1f}MB), skipping")
                 return None
             
-            # Download with size limit
+            # ✅ DOWNLOAD WITH PROPER CHUNKING
             downloaded = 0
             with open(filepath, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
+                for chunk in response.iter_content(chunk_size=1024 * 1024):  # 1MB chunks
                     if chunk:
                         f.write(chunk)
                         downloaded += len(chunk)
                         
-                        # Enforce size limit during download
+                        # Enforce size limit
                         if downloaded > self.max_file_size:
-                            print(f"⚠️  Size limit exceeded, aborting")
-                            os.remove(filepath)
+                            print(f"⚠️  Size limit exceeded")
+                            f.close()
+                            if os.path.exists(filepath):
+                                os.remove(filepath)
                             return None
             
-            print(f"✅ Downloaded: {keyword} ({downloaded / 1024:.1f}KB)")
+            # ✅ VERIFY FILE WAS DOWNLOADED
+            if not os.path.exists(filepath):
+                print(f"❌ File not created: {filepath}")
+                return None
+            
+            file_size = os.path.getsize(filepath)
+            if file_size < 1000:  # Less than 1KB = corrupted
+                print(f"❌ File too small ({file_size} bytes), corrupted")
+                os.remove(filepath)
+                return None
+            
+            print(f"✅ Downloaded: {keyword} ({file_size / 1024:.1f}KB)")
             return filepath
             
         except requests.Timeout:
             print(f"⏱️  Download timeout: {keyword}")
+            if os.path.exists(filepath):
+                os.remove(filepath)
             return None
         except Exception as e:
             print(f"❌ Error downloading: {e}")
@@ -155,7 +174,7 @@ class ClipFetcher:
             return None
     
     def _fetch_single_clip(self, keyword: str) -> Optional[str]:
-        """Fetch a single clip (used in parallel execution)"""
+        """Fetch a single clip with validation"""
         # Check cache first
         cached = self._get_cached_clip(keyword)
         if cached:
@@ -165,20 +184,19 @@ class ClipFetcher:
         videos = self.search_videos(keyword, per_page=3)
         
         if not videos:
-            # FAIL-FAST: Try fallback keyword
+            # Fail-fast: Try fallback
             fallback_keywords = ['nature', 'landscape', 'sky', 'water']
             for fallback in fallback_keywords:
                 if fallback != keyword:
                     print(f"🔄 Trying fallback: {fallback}")
                     videos = self.search_videos(fallback, per_page=2)
                     if videos:
-                        keyword = fallback  # Use fallback for caching
+                        keyword = fallback
                         break
         
         if not videos:
             return None
         
-        # Get first video
         video = videos[0]
         video_files = video.get('video_files', [])
         
@@ -192,28 +210,23 @@ class ClipFetcher:
         if not video_url:
             return None
         
-        # Download
+        # Download with proper streaming
         return self.download_clip(video_url, keyword)
     
     def fetch_clips_for_scenes(self, scenes: List[Dict]) -> List[str]:
         """
-        Fetch clips in PARALLEL with optimizations:
-        - Max 3 clips only
-        - Parallel downloads
-        - Caching
-        - Timeouts
-        - Fail-fast
+        Fetch clips in PARALLEL with validation
+        Returns only valid, non-corrupted clips
         """
-        # LIMIT: Max 3 clips
+        # Max 3 clips
         scenes = scenes[:3]
         
         print(f"\n🚀 Fetching {len(scenes)} clips in parallel...")
         
         downloaded_clips = []
         
-        # PARALLEL DOWNLOAD using ThreadPoolExecutor
+        # Parallel download
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            # Submit all download tasks
             future_to_scene = {}
             for scene in scenes:
                 keywords = scene.get('keywords', [])
@@ -222,44 +235,42 @@ class ClipFetcher:
                     future = executor.submit(self._fetch_single_clip, keyword)
                     future_to_scene[future] = keyword
             
-            # Collect results as they complete
+            # Collect results
             for future in as_completed(future_to_scene):
                 keyword = future_to_scene[future]
                 try:
                     filepath = future.result()
-                    if filepath:
-                        downloaded_clips.append(filepath)
+                    if filepath and os.path.exists(filepath):
+                        # ✅ VERIFY FILE IS VALID
+                        if os.path.getsize(filepath) > 1000:
+                            downloaded_clips.append(filepath)
+                        else:
+                            print(f"⚠️  Skipping corrupted file: {filepath}")
                 except Exception as e:
                     print(f"❌ Failed to fetch {keyword}: {e}")
         
-        print(f"✅ Downloaded {len(downloaded_clips)}/{len(scenes)} clips")
+        print(f"✅ Downloaded {len(downloaded_clips)}/{len(scenes)} valid clips")
         
-        # Ensure we have at least 1 clip
+        # Ensure at least 1 clip
         if not downloaded_clips:
-            print("⚠️  No clips downloaded, using fallback")
-            # Try one more fallback
+            print("⚠️  No clips downloaded, trying emergency fallback")
             fallback = self._fetch_single_clip('nature')
-            if fallback:
+            if fallback and os.path.exists(fallback):
                 downloaded_clips.append(fallback)
         
         return downloaded_clips
 
 
 if __name__ == "__main__":
-    # Test optimized fetcher
-    import time
-    
+    # Test
     fetcher = ClipFetcher()
     scenes = [
         {'id': 1, 'keywords': ['sunset']},
         {'id': 2, 'keywords': ['ocean']},
-        {'id': 3, 'keywords': ['mountains']},
     ]
     
-    start = time.time()
     clips = fetcher.fetch_clips_for_scenes(scenes)
-    elapsed = time.time() - start
-    
-    print(f"\n⚡ Fetched {len(clips)} clips in {elapsed:.1f}s")
+    print(f"\n⚡ Fetched {len(clips)} clips")
     for clip in clips:
-        print(f"  - {clip}")
+        size = os.path.getsize(clip) / 1024
+        print(f"  - {clip} ({size:.1f}KB)")
