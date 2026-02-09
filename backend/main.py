@@ -4,6 +4,7 @@ Uses stock footage pipeline instead of diffusion models
 """
 
 import os
+from dotenv import load_dotenv
 import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
@@ -14,6 +15,9 @@ from concurrent.futures import ThreadPoolExecutor
 import json
 
 from video_generator import VideoGenerator
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(title="NEXUS VISION API - Fast Video Generation")
 
@@ -28,8 +32,9 @@ app.add_middleware(
 # Thread pool for video generation
 executor = ThreadPoolExecutor(max_workers=2)
 
-# Initialize video generator
-video_gen = VideoGenerator(pexels_api_key=os.getenv('PEXELS_API_KEY'))
+# Initialize video generator with API key
+pexels_key = os.getenv('PEXELS_API_KEY', '2YmxczgDDvKxVncxrEtrnv82ksotaLFirswQk0Xyhng0cgy6GBXbRPmq')
+video_gen = VideoGenerator(pexels_api_key=pexels_key)
 
 # Serve Static Files
 PROJECT_ROOT = os.path.dirname(os.getcwd())
