@@ -32,23 +32,23 @@ class ScriptGenerator:
         return keywords[:5] if keywords else ['nature', 'landscape']
     
     def generate_scenes(self, prompt: str) -> List[Dict[str, str]]:
-        """Generate 3-5 scene descriptions from prompt"""
+        """Generate 3 scene descriptions from prompt (OPTIMIZED: Max 3 scenes)"""
         keywords = self.extract_keywords(prompt)
         
         scenes = []
         
-        # Generate scenes based on keywords
-        for i, keyword in enumerate(keywords[:5]):
+        # Generate scenes based on keywords (MAX 3)
+        for i, keyword in enumerate(keywords[:3]):  # LIMIT: Only 3 scenes
             scene = {
                 'id': i + 1,
                 'description': f"Scene showing {keyword}",
                 'keywords': [keyword],
-                'duration': 3.0  # seconds per clip
+                'duration': 3.0  # 3 seconds per clip
             }
             scenes.append(scene)
         
-        # Ensure at least 3 scenes
-        while len(scenes) < 3:
+        # Ensure at least 2 scenes
+        while len(scenes) < 2:
             scenes.append({
                 'id': len(scenes) + 1,
                 'description': f"Scene showing {keywords[0] if keywords else 'nature'}",
