@@ -36,12 +36,11 @@ class VideoEditor:
                 duration=duration
             )
             
-            # Create text (simplified for speed)
+            # Create text (simplified for speed) - Use default font
             txt = TextClip(
                 text=text,
                 font_size=40,
                 color='white',
-                font='Arial',
                 text_align='center',
                 size=(self.target_width - 40, None),
                 method='caption'
@@ -171,8 +170,7 @@ class VideoEditor:
                 preset='ultrafast',  # Fastest encoding
                 threads=4,
                 bitrate='500k',  # Lower bitrate for speed
-                logger=None,  # Suppress logs
-                verbose=False
+                logger=None  # Suppress logs
             )
             
             # Cleanup
