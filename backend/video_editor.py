@@ -1,6 +1,6 @@
 """
-Optimized Video Editor - BULLETPROOF pipeline
-FIXED: Proper duration handling, safe trimming, validation
+SAFE VIDEO PIPELINE - Zero-second video bug ELIMINATED
+Implements all mandatory safety rules
 """
 
 import os
@@ -26,6 +26,7 @@ class VideoEditor:
         self.target_width = 640
         self.target_height = 360
         self.fps = 24
+        self.min_clip_duration = 0.5  # RULE 2: Skip clips shorter than 0.5s
     
     def create_text_overlay(self, text: str, duration: float) -> CompositeVideoClip:
         """Create text overlay with fallback"""
@@ -58,19 +59,16 @@ class VideoEditor:
     
     def process_clip(self, clip_path: str) -> Optional[VideoFileClip]:
         """
-        ✅ BULLETPROOF clip processing
-        - Validates file exists
-        - Checks duration > 0
-        - Safe trimming with min()
-        - Proper error handling
+        SAFE CLIP PROCESSING
+        Implements RULE 1, 2, 3
         """
         try:
-            # ✅ VERIFY FILE EXISTS
+            # Verify file exists
             if not os.path.exists(clip_path):
                 print(f"❌ File not found: {clip_path}")
                 return None
             
-            # ✅ VERIFY FILE SIZE
+            # Verify file size
             file_size = os.path.getsize(clip_path)
             if file_size < 1000:
                 print(f"❌ File too small ({file_size} bytes): {clip_path}")
@@ -78,32 +76,28 @@ class VideoEditor:
             
             print(f"⚡ Loading: {os.path.basename(clip_path)} ({file_size / 1024:.1f}KB)")
             
-            # ✅ LOAD CLIP
+            # Load clip
             clip = VideoFileClip(clip_path)
             
-            # ✅ DEBUG: Print duration
-            print(f"   Duration: {clip.duration:.2f}s")
+            # RULE 1: PRINT DURATION BEFORE USE
+            print(f"   📊 Original duration: {clip.duration:.2f}s")
             
-            # ✅ VALIDATE DURATION > 0
-            if clip.duration <= 0:
-                print(f"❌ Clip has 0 duration, skipping")
+            # RULE 2: SKIP CLIPS SHORTER THAN 0.5 SECONDS
+            if clip.duration < self.min_clip_duration:
+                print(f"❌ Skipping too short clip ({clip.duration:.2f}s < {self.min_clip_duration}s)")
                 clip.close()
                 return None
             
-            # ✅ VALIDATE MINIMUM DURATION
-            if clip.duration < 0.5:
-                print(f"⚠️  Clip too short ({clip.duration:.2f}s), skipping")
-                clip.close()
-                return None
+            # RULE 3: TRIM USING min(clip.duration, 3)
+            safe_end = min(self.clip_duration, clip.duration)
+            print(f"   ✂️  Trimming to: {safe_end:.2f}s")
             
-            # ✅ SAFE TRIMMING: Use min() to prevent errors
-            trim_duration = min(self.clip_duration, clip.duration)
-            print(f"   Trimming to: {trim_duration:.2f}s")
+            if safe_end < clip.duration:
+                clip = clip.subclipped(0, safe_end)
             
-            if trim_duration < clip.duration:
-                clip = clip.subclipped(0, trim_duration)
+            # Verify trimmed duration
+            print(f"   ✅ Trimmed duration: {clip.duration:.2f}s")
             
-            # ✅ VERIFY TRIMMED DURATION
             if clip.duration <= 0:
                 print(f"❌ Clip became 0 duration after trim")
                 clip.close()
@@ -121,7 +115,7 @@ class VideoEditor:
                 vfx.FadeOut(self.transition_duration)
             ])
             
-            print(f"✅ Processed: {os.path.basename(clip_path)} - {clip.duration:.2f}s")
+            print(f"✅ Processed successfully: {clip.duration:.2f}s")
             return clip
             
         except Exception as e:
@@ -137,11 +131,8 @@ class VideoEditor:
         output_filename: Optional[str] = None
     ) -> Optional[str]:
         """
-        ✅ BULLETPROOF video creation
-        - Validates all clips
-        - Never concatenates empty list
-        - Proper error handling
-        - Debug output
+        SAFE VIDEO CREATION PIPELINE
+        Implements ALL MANDATORY RULES
         """
         
         if not clip_paths:
@@ -149,10 +140,12 @@ class VideoEditor:
             return None
         
         try:
-            print("\n🎬 Creating video with bulletproof pipeline...")
+            print("\n" + "="*60)
+            print("🎬 SAFE VIDEO PIPELINE - Starting")
+            print("="*60)
             print(f"📋 Input clips: {len(clip_paths)}")
             
-            # ✅ PROCESS AND VALIDATE ALL CLIPS
+            # Process all clips
             processed_clips = []
             for i, clip_path in enumerate(clip_paths):
                 print(f"\n📹 Processing clip {i+1}/{len(clip_paths)}")
@@ -161,20 +154,35 @@ class VideoEditor:
                 if clip and clip.duration > 0:
                     processed_clips.append(clip)
                 else:
-                    print(f"⚠️  Skipping invalid clip: {clip_path}")
+                    print(f"⚠️  Skipping invalid clip")
                 
                 # Limit to 3 clips
                 if len(processed_clips) >= 3:
                     break
             
-            # ✅ VALIDATE WE HAVE CLIPS
+            # RULE 7: RAISE ERROR IF NO VALID CLIPS
             if not processed_clips:
-                print("❌ No valid clips to process")
-                raise ValueError("No valid clips available for video creation")
+                print("\n❌ CRITICAL: No valid clips available")
+                raise ValueError("All clips are invalid - cannot create video")
             
-            print(f"\n✅ Valid clips: {len(processed_clips)}")
-            for i, clip in enumerate(processed_clips):
-                print(f"   Clip {i+1}: {clip.duration:.2f}s")
+            print(f"\n✅ Valid clips collected: {len(processed_clips)}")
+            
+            # STEP 1: VERIFY CLIPS (MOST IMPORTANT)
+            print("\n" + "-"*60)
+            print("---- CLIP DEBUG ----")
+            for i, c in enumerate(processed_clips):
+                print(f"Clip {i} duration: {c.duration:.2f}s")
+            print("-"*60)
+            
+            # STEP 3: SAFE CONCATENATION
+            # Filter clips > 0.5s
+            valid_clips = [c for c in processed_clips if c.duration > self.min_clip_duration]
+            
+            if len(valid_clips) == 0:
+                print("❌ All clips too short after filtering")
+                raise Exception("All clips invalid!")
+            
+            print(f"\n✅ Clips after filtering: {len(valid_clips)}")
             
             # Create intro text
             print("\n📝 Creating text overlay...")
@@ -184,25 +192,27 @@ class VideoEditor:
             )
             print(f"   Text duration: {intro_text.duration:.2f}s")
             
-            # ✅ COMBINE CLIPS (NEVER EMPTY LIST)
+            # Combine clips
             print("\n🔗 Combining clips...")
-            all_clips = [intro_text] + processed_clips
+            all_clips = [intro_text] + valid_clips
             
             print(f"   Total clips to combine: {len(all_clips)}")
             total_duration = sum(c.duration for c in all_clips)
             print(f"   Expected total duration: {total_duration:.2f}s")
             
+            # RULE 4: USE method="compose"
+            print("\n🎬 Concatenating with method='compose'...")
             final_video = concatenate_videoclips(
                 all_clips, 
-                method="compose"
+                method="compose"  # MANDATORY
             )
             
-            # ✅ VALIDATE FINAL VIDEO
+            # Validate final video
+            print(f"✅ Final video duration: {final_video.duration:.2f}s")
+            
             if final_video.duration <= 0:
                 print("❌ Final video has 0 duration!")
                 raise ValueError("Final video duration is 0")
-            
-            print(f"✅ Final video duration: {final_video.duration:.2f}s")
             
             # Generate output filename
             if not output_filename:
@@ -211,20 +221,26 @@ class VideoEditor:
             
             output_path = os.path.join(self.output_dir, output_filename)
             
-            # ✅ EXPORT WITH PROPER SETTINGS
+            # RULE 6: EXPORT WITH CORRECT SETTINGS
             print(f"\n💾 Exporting to: {output_path}")
+            print("   Settings:")
+            print(f"   - codec: libx264")
+            print(f"   - fps: {self.fps}")
+            print(f"   - preset: medium")
+            print(f"   - threads: 4")
+            print(f"   - audio: False")
+            
             final_video.write_videofile(
                 output_path,
-                fps=self.fps,
-                codec='libx264',  # ✅ EXPLICIT CODEC
-                audio=False,
-                preset='ultrafast',
-                threads=4,
-                bitrate='500k',
+                fps=self.fps,           # RULE 6
+                codec='libx264',        # RULE 6
+                preset='medium',        # RULE 6
+                audio=False,            # RULE 6
+                threads=4,              # RULE 6
                 logger=None
             )
             
-            # ✅ VERIFY OUTPUT FILE
+            # Verify output file
             if not os.path.exists(output_path):
                 print("❌ Output file was not created!")
                 raise ValueError("Video export failed - file not created")
@@ -234,10 +250,13 @@ class VideoEditor:
                 print(f"❌ Output file too small ({file_size} bytes)")
                 raise ValueError("Video export failed - file too small")
             
-            print(f"✅ Video created successfully!")
+            print("\n" + "="*60)
+            print("✅ VIDEO CREATED SUCCESSFULLY!")
+            print("="*60)
             print(f"   Path: {output_path}")
             print(f"   Size: {file_size / 1024 / 1024:.2f}MB")
             print(f"   Duration: {final_video.duration:.2f}s")
+            print("="*60 + "\n")
             
             # Cleanup
             final_video.close()
@@ -257,7 +276,8 @@ class VideoEditor:
 if __name__ == "__main__":
     # Test
     editor = VideoEditor()
-    print("✅ Video Editor initialized")
+    print("✅ SAFE VIDEO PIPELINE initialized")
     print(f"   Resolution: {editor.target_width}x{editor.target_height}")
     print(f"   Clip duration: {editor.clip_duration}s")
+    print(f"   Min clip duration: {editor.min_clip_duration}s")
     print(f"   FPS: {editor.fps}")
