@@ -292,7 +292,16 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 2rem;
-    animation: fadeIn 0.8s ease;
+    animation: fadeIn 0.8s ease, floatBadge 3s ease-in-out infinite;
+}
+
+@keyframes floatBadge {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .badge-pulse {
@@ -318,7 +327,16 @@ body {
     font-weight: 900;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    animation: fadeIn 0.8s ease 0.2s both;
+    animation: fadeIn 0.8s ease 0.2s both, textGlow 4s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 0 60px rgba(118, 75, 162, 0.4);
+    }
 }
 
 .title-gradient {
@@ -326,6 +344,17 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .hero-desc {
