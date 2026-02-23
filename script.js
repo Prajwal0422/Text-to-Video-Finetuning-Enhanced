@@ -179,10 +179,13 @@ function initNavbar() {
 // Scroll Animations
 function initAnimations() {
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                }, index * 100);
+                observer.unobserve(entry.target);
             }
         });
     }, {
@@ -190,10 +193,32 @@ function initAnimations() {
         rootMargin: '0px 0px -50px 0px'
     });
     
-    document.querySelectorAll('.feature-card, .demo-stat, .tech-item').forEach(el => {
+    document.querySelectorAll('.feature-card').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(50px) scale(0.9)';
+        el.style.transition = `opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+        observer.observe(el);
+    });
+    
+    document.querySelectorAll('.demo-stat').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-50px)';
+        el.style.transition = `opacity 0.6s ease ${index * 0.15}s, transform 0.6s ease ${index * 0.15}s`;
+        observer.observe(el);
+    });
+    
+    document.querySelectorAll('.tech-item').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px) rotate(-5deg)';
+        el.style.transition = `opacity 0.6s ease ${index * 0.08}s, transform 0.6s ease ${index * 0.08}s`;
+        observer.observe(el);
+    });
+    
+    // Section headers animation
+    document.querySelectorAll('.section-header').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
         observer.observe(el);
     });
 }
