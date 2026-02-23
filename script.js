@@ -1,5 +1,6 @@
 // Ultra-Modern Interactions
 document.addEventListener('DOMContentLoaded', () => {
+    initLoadingScreen();
     initSmoothScroll();
     initNavbar();
     initAnimations();
@@ -7,6 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initMouseTracker();
 });
+
+// Loading Screen
+function initLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }, 2000);
+    });
+}
 
 // Mouse Tracker Effect
 function initMouseTracker() {

@@ -28,6 +28,77 @@ body {
     cursor: none;
 }
 
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-logo {
+    margin-bottom: 2rem;
+    animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.loading-icon {
+    margin: 0 auto;
+    animation: rotate 2s linear infinite, glow 2s ease-in-out infinite;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto 1rem;
+}
+
+.loading-progress {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 10px;
+    animation: loadProgress 2s ease-in-out;
+}
+
+@keyframes loadProgress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.loading-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
 .cursor-glow {
     position: fixed;
     width: 40px;
