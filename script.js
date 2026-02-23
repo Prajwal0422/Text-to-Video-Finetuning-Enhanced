@@ -262,8 +262,22 @@ window.addEventListener('scroll', () => {
     
     spheres.forEach((sphere, index) => {
         const speed = (index + 1) * 0.05;
-        sphere.style.transform = `translateY(${scrolled * speed}px)`;
+        const rotation = scrolled * 0.1;
+        sphere.style.transform = `translateY(${scrolled * speed}px) rotate(${rotation}deg)`;
     });
+    
+    // Parallax for grid overlay
+    const grid = document.querySelector('.grid-overlay');
+    if (grid) {
+        grid.style.transform = `translateY(${scrolled * 0.3}px)`;
+    }
+    
+    // Parallax for hero content
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent && scrolled < window.innerHeight) {
+        heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+        heroContent.style.opacity = 1 - (scrolled / window.innerHeight) * 0.8;
+    }
 });
 
 // Console Easter Egg
