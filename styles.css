@@ -533,7 +533,7 @@ section {
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
     padding: 2.5rem;
-    transition: all 0.3s;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -547,17 +547,43 @@ section {
     height: 3px;
     background: var(--gradient);
     transform: scaleX(0);
-    transition: transform 0.3s;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s;
 }
 
 .feature-card:hover::before {
     transform: scaleX(1);
 }
 
+.feature-card:hover::after {
+    opacity: 1;
+    animation: rotateGradient 4s linear infinite;
+}
+
+@keyframes rotateGradient {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .feature-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px) scale(1.02);
     border-color: rgba(102, 126, 234, 0.3);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow), 0 0 40px rgba(102, 126, 234, 0.2);
 }
 
 .feature-icon {
@@ -570,17 +596,47 @@ section {
     justify-content: center;
     margin-bottom: 1.5rem;
     color: white;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+}
+
+.feature-icon svg {
+    transition: transform 0.3s;
+}
+
+.feature-card:hover .feature-icon svg {
+    transform: scale(1.2);
 }
 
 .feature-card h3 {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    transition: color 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card:hover h3 {
+    color: var(--accent-1);
 }
 
 .feature-card p {
     color: var(--text-secondary);
     line-height: 1.7;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s;
+}
+
+.feature-card:hover p {
+    color: var(--text-primary);
 }
 
 /* Demo Section */
