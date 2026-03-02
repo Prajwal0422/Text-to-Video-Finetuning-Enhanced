@@ -30,12 +30,10 @@ def test_download_and_normalize():
     # Step 1: Download clip
     print("\n[STEP 1] Downloading test clip from Pexels")
     
-    # Use a known working video URL (small file)
-    # This is a direct link to a small Pexels video
-    test_url = "https://player.vimeo.com/external/373971162.sd.mp4?s=7c6f0c6f3c3e3c3e3c3e3c3e3c3e3c3e3c3e3c3e&profile_id=164&oauth2_token_id=57447761"
+    # Use Pexels API
+    api_key = os.getenv('PEXELS_API_KEY', '2YmxczgDDvKxVncxrEtrnv82ksotaLFirswQk0Xyhng0cgy6GBXbRPmq')
+    test_url = None
     
-    # Fallback: Use Pexels API if available
-    api_key = os.getenv('PEXELS_API_KEY', '')
     if api_key:
         print("Using Pexels API to find clip...")
         try:
@@ -57,8 +55,19 @@ def test_download_and_normalize():
                     if small_files:
                         test_url = small_files[0]['link']
                         print(f"Found Pexels video: {test_url[:60]}...")
+                    else:
+                        print("No small files found, using first available")
+                        if video_files:
+                            test_url = video_files[0]['link']
+            else:
+                print(f"Pexels API returned status {response.status_code}")
         except Exception as e:
-            print(f"Pexels API failed, using fallback URL: {e}")
+            print(f"Pexels API error: {e}")
+    
+    if not test_url:
+        print("❌ ABORT: Could not get video URL from Pexels API")
+        print("Please set PEXELS_API_KEY environment variable")
+        sys.exit(1)
     
     print(f"Downloading from: {test_url[:80]}...")
     
