@@ -1148,7 +1148,8 @@ section {
     padding: 4rem 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, transparent 0%, rgba(99, 102, 241, 0.03) 100%);
 }
 
 .footer-content {
@@ -1178,11 +1179,29 @@ section {
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: all 0.3s;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.footer-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient);
+    transition: width 0.3s;
 }
 
 .footer-links a:hover {
     color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.footer-links a:hover::after {
+    width: 100%;
 }
 
 .footer-bottom {
