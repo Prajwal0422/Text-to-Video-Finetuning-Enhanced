@@ -427,6 +427,8 @@ body {
     line-height: 1.1;
     margin-bottom: 1.5rem;
     animation: fadeIn 0.8s ease 0.2s both, textGlow 4s ease-in-out infinite;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 40px rgba(99, 102, 241, 0.3);
 }
 
 @keyframes textGlow {
@@ -462,6 +464,10 @@ body {
     margin-bottom: 3rem;
     line-height: 1.8;
     animation: fadeIn 0.8s ease 0.4s both;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
 }
 
 .hero-actions {
