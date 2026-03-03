@@ -804,18 +804,19 @@ section {
 
 .video-player {
     aspect-ratio: 16/9;
-    background: linear-gradient(135deg, #1a1a24 0%, #13131a 100%);
-    border-radius: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
+    border-radius: 24px;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
 .video-player:hover {
     transform: scale(1.02);
-    border-color: rgba(102, 126, 234, 0.3);
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 24px 70px rgba(99, 102, 241, 0.4);
 }
 
 .video-overlay {
@@ -824,12 +825,12 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
     transition: background 0.4s;
 }
 
 .video-player:hover .video-overlay {
-    background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%);
 }
 
 .play-btn {
