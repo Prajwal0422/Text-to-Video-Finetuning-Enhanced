@@ -765,9 +765,24 @@ section {
 
 /* Demo Section */
 .demo {
-    background: var(--bg-card);
-    border-radius: 30px;
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 26, 46, 0.8) 100%);
+    border-radius: 32px;
     padding: 6rem 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.demo::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    animation: float 20s ease-in-out infinite;
 }
 
 .demo-container {
@@ -1031,9 +1046,24 @@ section {
 
 /* Tech Stack */
 .tech {
-    background: var(--bg-card);
-    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, var(--bg-card) 100%);
+    border-radius: 32px;
     padding: 6rem 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech::before {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    animation: float 25s ease-in-out infinite reverse;
 }
 
 .tech-grid {
