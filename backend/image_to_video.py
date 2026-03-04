@@ -4,12 +4,38 @@ import imageio
 from PIL import Image
 import os
 
+# Import enhanced engine if available
+try:
+    from enhanced_motion_engine import EnhancedMotionEngine
+    ENHANCED_AVAILABLE = True
+except ImportError:
+    ENHANCED_AVAILABLE = False
+
 class MotionEngine:
     @staticmethod
-    def create_video(image, output_path, duration=3, fps=24, motion_type="zoom_in"):
+    def create_video(image, output_path, duration=3, fps=24, motion_type="zoom_in",
+                    use_enhanced=True, quality_mode="balanced"):
         """
         Applies cinematic motion transforms to a static image to create a high-quality video sequence.
+        
+        Args:
+            image: PIL Image or numpy array
+            output_path: Output file path
+            duration: Video duration in seconds
+            fps: Frames per second
+            motion_type: Type of motion effect
+            use_enhanced: Use enhanced engine with all optimizations
+            quality_mode: "fast", "balanced", or "quality"
         """
+        # Use enhanced engine if available and requested
+        if use_enhanced and ENHANCED_AVAILABLE:
+            engine = EnhancedMotionEngine(quality_mode=quality_mode)
+            return engine.create_video(
+                image, output_path, duration=duration, 
+                fps=fps, motion_type=motion_type
+            )
+        
+        # Fallback to basic engine
         img_np = np.array(image)
         h, w, _ = img_np.shape
         frames = []

@@ -1,0 +1,11 @@
+NEXUS VISION - Video Placeholder
+==================================================
+
+Prompt: a YELLOW FLOWER MOVING
+
+Clips used: 0
+
+==================================================
+To generate actual videos:
+1. Install moviepy: pip install moviepy
+2. Restart the server
