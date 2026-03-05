@@ -50,6 +50,18 @@ class VideoGenerator:
         video_editor: Video editor instance for composition
     """
     def __init__(self, pexels_api_key: Optional[str] = None):
+        """
+        Initialize the video generator with all required components
+        
+        Args:
+            pexels_api_key: Optional API key for Pexels video service
+                          If not provided, will attempt to load from environment
+        
+        Initializes:
+            - Script generator for prompt-to-scene conversion
+            - Clip fetcher for downloading video clips
+            - Video editor for final composition
+        """
         self.script_gen = ScriptGenerator()
         self.clip_fetcher = ClipFetcher(api_key=pexels_api_key)
         self.video_editor = VideoEditor()
