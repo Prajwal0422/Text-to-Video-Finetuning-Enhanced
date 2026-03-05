@@ -68,14 +68,53 @@ class VideoGenerator:
     
     def generate(self, prompt: str, progress_callback=None) -> Dict:
         """
-        Main generation pipeline
-        Returns: {
-            'success': bool,
-            'video_path': str,
-            'duration': float,
-            'message': str
-        }
+        Main video generation pipeline - orchestrates all stages
+        
+        This is the primary method that coordinates the entire video generation
+        process from text prompt to final video file.
+        
+        Pipeline Stages:
+        1. Script Generation (1-2s)
+           - Analyzes prompt and extracts keywords
+           - Generates structured scene descriptions
+           - Determines optimal scene count and duration
+        
+        2. Clip Fetching (10-15s)
+           - Searches Pexels API for relevant clips
+           - Downloads and caches video clips
+           - Normalizes clip formats and resolutions
+        
+        3. Video Composition (5-10s)
+           - Merges clips with transitions
+           - Applies effects and filters
+           - Exports final video file
+        
+        Args:
+            prompt: Text description of desired video content
+                   Example: "A beautiful sunset over mountains"
+            progress_callback: Optional callback function(progress, message)
+                             Called at each stage with progress percentage (0-100)
+                             and status message
+        
+        Returns:
+            Dictionary containing:
+            - success (bool): Whether generation succeeded
+            - video_path (str): Path to generated video file
+            - duration (float): Total generation time in seconds
+            - message (str): Success or error message
+            - script (dict): Generated script structure (on success)
+        
+        Raises:
+            Exception: Catches and returns all exceptions in result dict
+                      for graceful error handling
+        
+        Example:
+            >>> generator = VideoGenerator(api_key="your_key")
+            >>> result = generator.generate("Ocean waves at sunset")
+            >>> if result['success']:
+            ...     print(f"Video saved to: {result['video_path']}")
         """
+        # Track total generation time for performance monitoring
         start_time = time.time()
         
         try:
