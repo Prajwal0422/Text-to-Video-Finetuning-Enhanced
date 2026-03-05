@@ -171,6 +171,16 @@ class VideoGenerator:
                 prompt=prompt
             )
             
+            # ============================================================
+            # ERROR HANDLING: Video Creation Failed
+            # ============================================================
+            # If video_editor returns None, it means the composition failed
+            # This can happen due to:
+            # - Corrupted clip files
+            # - Insufficient disk space
+            # - Codec issues
+            # - Memory constraints
+            
             if not video_path:
                 return {
                     'success': False,
@@ -179,7 +189,11 @@ class VideoGenerator:
                     'message': 'Failed to create video'
                 }
             
-            # Complete
+            # ============================================================
+            # SUCCESS: Video Generation Complete
+            # ============================================================
+            # Notify callback of completion and return success result
+            
             if progress_callback:
                 progress_callback(100, "Complete!")
             
@@ -192,10 +206,17 @@ class VideoGenerator:
                 'video_path': video_path,
                 'duration': elapsed,
                 'message': f'Video created successfully in {elapsed:.1f}s',
-                'script': script
+                'script': script  # Include script for debugging/analysis
             }
             
         except Exception as e:
+            # ============================================================
+            # EXCEPTION HANDLING: Catch All Errors
+            # ============================================================
+            # Gracefully handle any unexpected errors during generation
+            # Returns error details instead of crashing
+            # Logs error for debugging purposes
+            
             elapsed = time.time() - start_time
             print(f"\n❌ Error: {e}")
             
