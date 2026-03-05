@@ -1,3 +1,33 @@
+"""
+Image to Video Conversion Module
+
+This module provides motion effects to convert static images into dynamic videos.
+Supports both basic and enhanced motion engines with various algorithms.
+
+Features:
+- Multiple motion types (zoom, pan, rotate, etc.)
+- Quality modes (fast, balanced, quality)
+- GPU acceleration support
+- Optical flow interpolation
+- Motion blur effects
+- Cinematic post-processing
+
+Performance:
+- Fast mode: 5-8 seconds
+- Balanced mode: 8-12 seconds  
+- Quality mode: 15-20 seconds
+
+Usage:
+    from image_to_video import MotionEngine
+    
+    engine = MotionEngine()
+    engine.create_video(
+        image, "output.mp4",
+        motion_type="zoom_in",
+        quality_mode="balanced"
+    )
+"""
+
 import cv2
 import numpy as np
 import imageio
@@ -5,6 +35,8 @@ from PIL import Image
 import os
 
 # Import enhanced engine if available
+# Enhanced engine provides advanced algorithms for smoother motion
+# Falls back to basic engine if dependencies not installed
 try:
     from enhanced_motion_engine import EnhancedMotionEngine
     ENHANCED_AVAILABLE = True
