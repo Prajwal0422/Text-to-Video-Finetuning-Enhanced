@@ -229,23 +229,50 @@ class VideoGenerator:
 
 
 def test_generation():
-    """Test the video generation pipeline"""
+    """
+    Test the video generation pipeline with sample prompts
+    
+    This function serves as both a test suite and usage example.
+    It demonstrates:
+    - How to initialize the VideoGenerator
+    - How to call the generate method
+    - How to handle success/failure results
+    - Performance benchmarking
+    
+    Test Prompts:
+    - Covers different scene types (nature, ocean, urban)
+    - Tests keyword extraction variety
+    - Validates end-to-end pipeline
+    
+    Output:
+    - Prints detailed progress for each test
+    - Shows generation time and success status
+    - Displays output file paths
+    
+    Usage:
+        Run directly: python video_generator.py
+        Or import: from video_generator import test_generation
+    """
     print("=" * 60)
     print("NEXUS VISION - Fast Video Generation Test")
     print("=" * 60)
     
+    # Initialize generator (API key loaded from environment)
     generator = VideoGenerator()
     
+    # Test prompts covering different content types
     test_prompts = [
-        "A beautiful sunset over mountains",
-        "Ocean waves on a tropical beach",
-        "City lights at night"
+        "A beautiful sunset over mountains",  # Nature/landscape
+        "Ocean waves on a tropical beach",    # Water/nature
+        "City lights at night"                # Urban/cityscape
     ]
     
+    # Run generation test for each prompt
     for prompt in test_prompts:
         print(f"\n🎯 Testing prompt: '{prompt}'")
         result = generator.generate(prompt)
         
+        # Display results
         if result['success']:
             print(f"✅ SUCCESS - Generated in {result['duration']:.1f}s")
             print(f"   Video: {result['video_path']}")
@@ -254,6 +281,12 @@ def test_generation():
         
         print("-" * 60)
 
+
+# ============================================================
+# MAIN ENTRY POINT
+# ============================================================
+# When run directly, execute test suite
+# This allows for easy testing and validation
 
 if __name__ == "__main__":
     test_generation()
