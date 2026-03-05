@@ -131,7 +131,18 @@ class MotionEngine:
             ...     quality_mode="quality"
             ... )
         """
-        # Use enhanced engine if available and requested
+        # ============================================================
+        # ENGINE SELECTION: Enhanced vs Basic
+        # ============================================================
+        # Try to use enhanced engine if available and requested
+        # Enhanced engine provides:
+        # - Optical flow interpolation for smoother motion
+        # - GPU acceleration (3x faster)
+        # - Advanced easing functions
+        # - Motion blur effects
+        # - Video stabilization
+        # - Cinematic post-processing
+        
         if use_enhanced and ENHANCED_AVAILABLE:
             engine = EnhancedMotionEngine(quality_mode=quality_mode)
             return engine.create_video(
@@ -139,7 +150,17 @@ class MotionEngine:
                 fps=fps, motion_type=motion_type
             )
         
-        # Fallback to basic engine
+        # ============================================================
+        # FALLBACK: Basic Engine
+        # ============================================================
+        # Use basic engine if enhanced not available or not requested
+        # Basic engine provides:
+        # - Simple motion effects
+        # - Fast generation
+        # - No external dependencies
+        # - Reliable fallback option
+        
+        # Convert PIL Image to numpy array for processing
         img_np = np.array(image)
         h, w, _ = img_np.shape
         frames = []
