@@ -44,20 +44,92 @@ except ImportError:
     ENHANCED_AVAILABLE = False
 
 class MotionEngine:
+    """
+    Motion Engine for Image-to-Video Conversion
+    
+    Applies cinematic motion effects to static images to create dynamic videos.
+    Supports both basic and enhanced rendering engines.
+    
+    Motion Types Supported:
+    - zoom_in: Smooth zoom into the image
+    - zoom_out: Smooth zoom out from the image
+    - pan_right: Pan from left to right
+    - pan_left: Pan from right to left
+    - pan_up: Pan from bottom to top
+    - pan_down: Pan from top to bottom
+    - rotate_cw: Clockwise rotation
+    - rotate_ccw: Counter-clockwise rotation
+    - ken_burns: Documentary-style pan and zoom
+    - dolly_zoom: Vertigo effect
+    - breathe: Subtle breathing motion
+    
+    Quality Modes:
+    - fast: 24 FPS, basic effects, fastest generation
+    - balanced: 30 FPS, standard effects, good quality/speed ratio
+    - quality: 60 FPS, all effects, highest quality
+    
+    Example:
+        >>> engine = MotionEngine()
+        >>> engine.create_video(
+        ...     image, "output.mp4",
+        ...     motion_type="ken_burns",
+        ...     quality_mode="balanced"
+        ... )
+    """
+    
     @staticmethod
     def create_video(image, output_path, duration=3, fps=24, motion_type="zoom_in",
                     use_enhanced=True, quality_mode="balanced"):
         """
-        Applies cinematic motion transforms to a static image to create a high-quality video sequence.
+        Create video from static image with motion effects
+        
+        This is the main entry point for image-to-video conversion.
+        Automatically selects the best available engine (enhanced or basic).
         
         Args:
             image: PIL Image or numpy array
-            output_path: Output file path
-            duration: Video duration in seconds
-            fps: Frames per second
-            motion_type: Type of motion effect
-            use_enhanced: Use enhanced engine with all optimizations
-            quality_mode: "fast", "balanced", or "quality"
+                  Input image to animate
+            
+            output_path: str
+                        Path where video will be saved (e.g., "output.mp4")
+            
+            duration: int, default=3
+                     Video duration in seconds
+            
+            fps: int, default=24
+                Frames per second (higher = smoother but larger file)
+                Recommended: 24 (fast), 30 (balanced), 60 (quality)
+            
+            motion_type: str, default="zoom_in"
+                        Type of motion effect to apply
+                        See class docstring for available types
+            
+            use_enhanced: bool, default=True
+                         Use enhanced engine if available
+                         Enhanced provides better quality but slower
+            
+            quality_mode: str, default="balanced"
+                         Quality preset: "fast", "balanced", or "quality"
+                         Only used with enhanced engine
+        
+        Returns:
+            str: Path to the created video file
+        
+        Performance:
+            - Basic engine: ~5 seconds
+            - Enhanced fast: ~8 seconds
+            - Enhanced balanced: ~12 seconds
+            - Enhanced quality: ~20 seconds
+        
+        Example:
+            >>> from PIL import Image
+            >>> img = Image.open("photo.jpg")
+            >>> MotionEngine.create_video(
+            ...     img, "video.mp4",
+            ...     duration=5,
+            ...     motion_type="ken_burns",
+            ...     quality_mode="quality"
+            ... )
         """
         # Use enhanced engine if available and requested
         if use_enhanced and ENHANCED_AVAILABLE:
