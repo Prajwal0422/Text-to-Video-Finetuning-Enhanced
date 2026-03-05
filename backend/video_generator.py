@@ -118,7 +118,16 @@ class VideoGenerator:
         start_time = time.time()
         
         try:
-            # Step 1: Generate script (1-2s)
+            # ============================================================
+            # STAGE 1: SCRIPT GENERATION (1-2 seconds)
+            # ============================================================
+            # Convert text prompt into structured scene descriptions
+            # This stage analyzes the prompt and generates:
+            # - Scene descriptions with keywords
+            # - Optimal scene count (typically 3-5 scenes)
+            # - Duration per scene
+            # - Search keywords for clip fetching
+            
             if progress_callback:
                 progress_callback(10, "Generating script...")
             
@@ -127,7 +136,16 @@ class VideoGenerator:
             print(f"✅ Generated {len(script['scenes'])} scenes")
             print(f"   Keywords: {', '.join(script['keywords'])}")
             
-            # Step 2: Fetch clips (10-15s)
+            # ============================================================
+            # STAGE 2: CLIP FETCHING (10-15 seconds)
+            # ============================================================
+            # Download relevant video clips from Pexels API
+            # This is typically the longest stage due to:
+            # - API search requests
+            # - Video file downloads
+            # - Format normalization
+            # Clips are cached to speed up future generations
+            
             if progress_callback:
                 progress_callback(30, "Fetching video clips...")
             
@@ -135,7 +153,15 @@ class VideoGenerator:
             clip_paths = self.clip_fetcher.fetch_clips_for_scenes(script['scenes'])
             print(f"✅ Downloaded {len(clip_paths)} clips")
             
-            # Step 3: Create video (5-10s)
+            # ============================================================
+            # STAGE 3: VIDEO COMPOSITION (5-10 seconds)
+            # ============================================================
+            # Merge clips into final video with:
+            # - Smooth transitions between clips
+            # - Resolution normalization
+            # - Audio mixing (if applicable)
+            # - Export to MP4 format
+            
             if progress_callback:
                 progress_callback(60, "Creating video...")
             
