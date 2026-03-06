@@ -9,7 +9,7 @@ import imageio
 from PIL import Image
 import os
 from typing import Optional
-from gpu_utils import get_gpu_manager
+from .gpu_utils import get_gpu_manager
 
 
 class UltraFastGenerator:

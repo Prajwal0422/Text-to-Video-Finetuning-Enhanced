@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import imageio
 from typing import List, Optional
-from advanced_video_algorithms import (
+from .advanced_video_algorithms import (
     EasingFunctions, OpticalFlowSmoother, MotionBlurEngine,
     AdaptiveFrameRateOptimizer, AdvancedStabilizer, ColorGradingEngine
 )

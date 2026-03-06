@@ -3,9 +3,9 @@ import uuid
 import logging
 import time
 from text_to_image import T2IEngine
-from image_to_video import MotionEngine
-from speed_optimizer import GPUAccelerator, PerformanceMonitor, AdaptiveQualityController
-from advanced_video_algorithms import SmoothMotionEngine, ColorGrading
+from .image_to_video import MotionEngine
+from .speed_optimizer import GPUAccelerator, PerformanceMonitor, AdaptiveQualityController
+from .advanced_video_algorithms import SmoothMotionEngine, ColorGrading
 
 logger = logging.getLogger(__name__)
 

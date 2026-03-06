@@ -20,14 +20,14 @@ Performance:
 
 import time
 from typing import Dict, Optional
-from script_generator import ScriptGenerator
-from clip_fetcher import ClipFetcher
+from .script_generator import ScriptGenerator
+from .clip_fetcher import ClipFetcher
 
 # Try to import moviepy-based editor, fallback to simple editor
 # MoviePy provides advanced video editing capabilities
 # If not available, falls back to basic video operations
 try:
-    from video_editor import VideoEditor
+    from .video_editor import VideoEditor
     MOVIEPY_AVAILABLE = True
 except ImportError:
     from simple_video_editor import VideoEditor

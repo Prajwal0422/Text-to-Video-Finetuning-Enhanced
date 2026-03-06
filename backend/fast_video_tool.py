@@ -17,12 +17,12 @@ from PIL import Image
 import logging
 
 # Import all optimization modules
-from gpu_utils import get_gpu_manager
-from cache_manager import get_cache_manager
-from performance_monitor import get_performance_monitor
-from enhanced_motion_engine import EnhancedMotionEngine
-from compression_optimizer import CompressionOptimizer
-from quality_analyzer import QualityAnalyzer
+from .gpu_utils import get_gpu_manager
+from .cache_manager import get_cache_manager
+from .performance_monitor import get_performance_monitor
+from .enhanced_motion_engine import EnhancedMotionEngine
+from .compression_optimizer import CompressionOptimizer
+from .quality_analyzer import QualityAnalyzer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
