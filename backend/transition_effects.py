@@ -5,7 +5,11 @@ Professional transitions between video clips
 
 import cv2
 import numpy as np
-from .advanced_video_algorithms import EasingFunctions
+
+try:
+    from .advanced_video_algorithms import EasingFunctions
+except ImportError:
+    from advanced_video_algorithms import EasingFunctions
 
 
 class TransitionEffects:

@@ -4,10 +4,18 @@ Automatically selects best generation method based on requirements
 """
 
 from typing import Dict, Optional
-from .fast_video_tool import FastVideoTool
-from .ultra_fast_generator import UltraFastGenerator
-from .enhanced_motion_engine import EnhancedMotionEngine
-from .quality_analyzer import QualityAnalyzer
+
+try:
+    from .fast_video_tool import FastVideoTool
+    from .ultra_fast_generator import UltraFastGenerator
+    from .enhanced_motion_engine import EnhancedMotionEngine
+    from .quality_analyzer import QualityAnalyzer
+except ImportError:
+    from fast_video_tool import FastVideoTool
+    from ultra_fast_generator import UltraFastGenerator
+    from enhanced_motion_engine import EnhancedMotionEngine
+    from quality_analyzer import QualityAnalyzer
+
 from PIL import Image
 import logging
 

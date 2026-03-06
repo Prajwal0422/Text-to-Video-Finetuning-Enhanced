@@ -6,7 +6,12 @@ Process multiple images in parallel for maximum throughput
 import os
 from typing import List, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from .fast_video_tool import FastVideoTool
+
+try:
+    from .fast_video_tool import FastVideoTool
+except ImportError:
+    from fast_video_tool import FastVideoTool
+
 import logging
 
 logger = logging.getLogger(__name__)

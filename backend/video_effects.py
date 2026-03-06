@@ -6,7 +6,11 @@ Cinematic transitions, filters, and visual enhancements
 import cv2
 import numpy as np
 from typing import List, Tuple
-from .advanced_video_algorithms import EasingFunctions
+
+try:
+    from .advanced_video_algorithms import EasingFunctions
+except ImportError:
+    from advanced_video_algorithms import EasingFunctions
 
 
 class TransitionEffects:

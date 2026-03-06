@@ -7,10 +7,17 @@ import cv2
 import numpy as np
 import imageio
 from typing import List, Optional
-from .advanced_video_algorithms import (
-    EasingFunctions, OpticalFlowSmoother, MotionBlurEngine,
-    AdaptiveFrameRateOptimizer, AdvancedStabilizer, ColorGradingEngine
-)
+
+try:
+    from .advanced_video_algorithms import (
+        EasingFunctions, OpticalFlowSmoother, MotionBlurEngine,
+        AdaptiveFrameRateOptimizer, AdvancedStabilizer, ColorGradingEngine
+    )
+except ImportError:
+    from advanced_video_algorithms import (
+        EasingFunctions, OpticalFlowSmoother, MotionBlurEngine,
+        AdaptiveFrameRateOptimizer, AdvancedStabilizer, ColorGradingEngine
+    )
 from speed_optimizer import (
     MultiThreadProcessor, MemoryOptimizer, CompressionOptimizer,
     GPUAccelerator, AdaptiveQualityManager, PreprocessingPipeline
