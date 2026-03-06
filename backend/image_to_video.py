@@ -166,35 +166,73 @@ class MotionEngine:
         frames = []
         num_frames = duration * fps
 
+        # ============================================================
+        # FRAME GENERATION LOOP
+        # ============================================================
+        # Generate each frame with progressive motion transformation
+        # Linear interpolation (t) from 0 to 1 across all frames
+        
         for i in range(num_frames):
+            # Calculate progress through animation (0.0 to 1.0)
             t = i / num_frames
             
+            # --------------------------------------------------------
+            # MOTION TYPE: ZOOM IN
+            # --------------------------------------------------------
+            # Gradually scale image from 100% to 115%
+            # Creates smooth zoom-in effect by:
+            # 1. Scaling image larger
+            # 2. Cropping center to maintain original dimensions
+            
             if motion_type == "zoom_in":
-                # Zoom In: Scale from 1.0 to 1.15
+                # Calculate scale factor (1.0 to 1.15)
                 scale = 1.0 + (t * 0.15)
                 new_w, new_h = int(w * scale), int(h * scale)
+                
+                # Resize with high-quality Lanczos interpolation
                 frame = cv2.resize(img_np, (new_w, new_h), interpolation=cv2.INTER_LANCZOS4)
                 
-                # Center Crop back to original size
+                # Center crop back to original size
                 x = (new_w - w) // 2
                 y = (new_h - h) // 2
                 frame = frame[y:y+h, x:x+w]
-                
+            
+            # --------------------------------------------------------
+            # MOTION TYPE: PAN RIGHT
+            # --------------------------------------------------------
+            # Slide viewing window from left to right
+            # Creates horizontal panning effect by:
+            # 1. Scaling image 10% larger
+            # 2. Moving crop window across width
+            
             elif motion_type == "pan_right":
-                # Pan Right: Slide window across a slightly larger scaled image
+                # Scale image slightly larger for panning room
                 scale = 1.1
                 new_w, new_h = int(w * scale), int(h * scale)
                 temp_img = cv2.resize(img_np, (new_w, new_h))
                 
+                # Calculate horizontal offset (0 to max_x)
                 max_x = new_w - w
                 x = int(t * max_x)
                 y = (new_h - h) // 2
-                frame = temp_img[y:y+h, x:x+w]
                 
-            else: # Default: Subtle breathe
+                # Extract moving window
+                frame = temp_img[y:y+h, x:x+w]
+            
+            # --------------------------------------------------------
+            # MOTION TYPE: BREATHE (Default)
+            # --------------------------------------------------------
+            # Subtle sinusoidal scaling for breathing effect
+            # Creates gentle in-out motion using sine wave
+            
+            else:
+                # Sine wave creates smooth in-out motion
+                # Amplitude: ±5% scale variation
                 scale = 1.0 + (np.sin(t * np.pi) * 0.05)
                 new_w, new_h = int(w * scale), int(h * scale)
                 frame = cv2.resize(img_np, (new_w, new_h))
+                
+                # Center crop to original size
                 x = (new_w - w) // 2
                 y = (new_h - h) // 2
                 frame = frame[y:y+h, x:x+w]
