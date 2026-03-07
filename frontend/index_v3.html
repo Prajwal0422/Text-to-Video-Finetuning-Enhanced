@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VISION | AI Video Generation Platform</title>
+    <link rel="stylesheet" href="styles_v3.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="brand-icon">⚡</div>
+                <span class="brand-text">NEXUS<span class="accent">VISION</span></span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#dashboard" class="nav-link">Dashboard</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#examples" class="nav-link">Examples</a>
+                <a href="https://github.com/Prajwal0422/Text-to-Video-Finetuning-Enhanced" class="nav-link" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+            <div class="grid-overlay"></div>
+        </div>
+        
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>AI-Powered Video Generation</span>
+            </div>
+            
+            <h1 class="hero-title">
+                Transform Text Into
+                <span class="gradient-text">Cinematic Video</span>
+            </h1>
+            
+            <p class="hero-description">
+                NEXUS VISION combines cutting-edge AI with lightning-fast processing to generate 
+                high-quality videos from text prompts in seconds. Experience the future of content creation.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="#dashboard" class="btn btn-primary">
+                    <span>Launch Dashboard</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <span>Explore Features</span>
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">< 10s</div>
+                    <div class="stat-label">Generation Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1080p</div>
+                    <div class="stat-label">HD Quality</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">60 FPS</div>
+                    <div class="stat-label">Smooth Motion</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">Free</div>
+                    <div class="stat-label">Open Source</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Generation Dashboard</h2>
+                <p class="section-subtitle">Create stunning videos with AI-powered text-to-video generation</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Main Generation Panel -->
+                <div class="dashboard-card main-panel">
+                    <div class="card-header">
+                        <h3>Video Generator</h3>
+                        <div class="status-badge">
+                            <span class="status-dot active"></span>
+                            <span>Ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="generation-form">
+                        <div class="form-group">
+                            <label for="prompt">
+                                Enter Your Prompt
+                                <span class="label-hint">Describe the video you want to create</span>
+                            </label>
+                            <textarea 
+                                id="prompt" 
+                                placeholder="e.g., 'A serene sunset over mountains with flowing clouds and birds flying'"
+                                rows="4"
+                            ></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span> / 500 characters
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mode">
+                                    Generation Mode
+                                    <span class="label-hint">Speed vs Quality</span>
+                                </label>
+                                <select id="mode">
+                                    <option value="ultra-fast">Ultra Fast (< 5s)</option>
+                                    <option value="fast" selected>Fast Mode (< 10s)</option>
+                                    <option value="quality">Quality Mode (< 30s)</option>
+                                    <option value="premium">Premium (< 60s)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="duration">
+                                    Duration
+                                    <span class="label-hint">Video length</span>
+                                </label>
+                                <select id="duration">
+                                    <option value="4">4 seconds</option>
+                                    <option value="8" selected>8 seconds</option>
+                                    <option value="12">12 seconds</option>
+                                    <option value="16">16 seconds</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resolution">
+                                    Resolution
+                                    <span class="label-hint">Output quality</span>
+                                </label>
+                                <select id="resolution">
+                                    <option value="720">720p HD</option>
+                                    <option value="1080" selected>1080p Full HD</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fps">
+                                    Frame Rate
+                                    <span class="label-hint">Smoothness</span>
+                                </label>
+                                <select id="fps">
+                                    <option value="24">24 FPS (Cinematic)</option>
+                                    <option value="30" selected>30 FPS (Standard)</option>
+                                    <option value="60">60 FPS (Smooth)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button id="generateBtn" class="btn btn-generate">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <span>Generate Video</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Progress Section -->
+                    <div id="progressSection" class="progress-section" style="display: none;">
+                        <div class="progress-header">
+                            <span id="progressStatus">Initializing...</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span id="progressStep">Starting generation...</span>
+                            <span id="progressTime">0s elapsed</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Result Section -->
+                    <div id="resultSection" class="result-section" style="display: none;">
+                        <div class="result-header">
+                            <h4>Generated Video</h4>
+                            <div class="result-actions">
+                                <button id="downloadBtn" class="btn btn-small">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                    </svg>
+                                    Download
+                                </button>
+                                <button id="shareBtn" class="btn btn-small btn-secondary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"></circle>
+                                        <circle cx="6" cy="12" r="3"></circle>
+                                        <circle cx="18" cy="19" r="3"></circle>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                    </svg>
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+                        <div class="video-container">
+                            <video id="resultVideo" controls loop></video>
+                        </div>
+                        <div class="video-info">
+                            <div class="info-item">
+                                <span class="info-label">Generation Time:</span>
+                                <span id="genTime" class="info-value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">File Size:</span>
+                                <span id="fileSize" class="info-value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Resolution:</span>
+                                <span id="videoRes" class="info-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="dashboard-sidebar">
+                    <div class="dashboard-card stats-card">
+                        <h3>System Status</h3>
+                        <div class="stats-list">
+                            <div class="stat-row">
+                                <span class="stat-icon">🚀</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">Server</div>
+                                    <div class="stat-status online">Online</div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">⚡</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">GPU</div>
+                                    <div class="stat-status">Available</div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">🎬</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">Queue</div>
+                                    <div class="stat-status">0 pending</div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">📊</span>
+                                <div class="stat-info">
+                                    <div class="stat-name">API Status</div>
+                                    <div id="apiStatus" class="stat-status">Checking...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card tips-card">
+                        <h3>💡 Pro Tips</h3>
+                        <ul class="tips-list">
+                            <li>Be specific with descriptions</li>
+                            <li>Include motion keywords (flowing, moving)</li>
+                            <li>Use Fast mode for quick previews</li>
+                            <li>Quality mode for final renders</li>
+                            <li>Add lighting details (sunset, golden hour)</li>
+                            <li>Mention camera angles (aerial, close-up)</li>
+                        </ul>
+                    </div>
+
+                    <div class="dashboard-card quick-prompts-card">
+                        <h3>🎯 Quick Prompts</h3>
+                        <div class="quick-prompts">
+                            <button class="quick-prompt-btn" data-prompt="A serene sunset over mountains with flowing clouds">🌄 Mountain Sunset</button>
+                            <button class="quick-prompt-btn" data-prompt="Ocean waves crashing on a beach at golden hour">🌊 Ocean Waves</button>
+                            <button class="quick-prompt-btn" data-prompt="City lights at night with time-lapse effect">🌃 City Lights</button>
+                            <button class="quick-prompt-btn" data-prompt="Northern lights dancing in the arctic sky">🌌 Aurora Borealis</button>
+                            <button class="quick-prompt-btn" data-prompt="Cherry blossoms falling in a Japanese garden">🌸 Cherry Blossoms</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="examples" class="examples-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Example Generations</h2>
+                <p class="section-subtitle">See what's possible with NEXUS VISION</p>
+            </div>
+            
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-thumbnail">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="example-content">
+                        <h4>Sunset Over Mountains</h4>
+                        <p class="example-prompt">"A serene sunset over mountains with flowing clouds"</p>
+                        <div class="example-meta">
+                            <span>⏱️ 8s</span>
+                            <span>📐 1080p</span>
+                            <span>⚡ Fast Mode</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-thumbnail">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="example-content">
+                        <h4>Ocean Waves</h4>
+                        <p class="example-prompt">"Ocean waves crashing on a beach at golden hour"</p>
+                        <div class="example-meta">
+                            <span>⏱️ 12s</span>
+                            <span>📐 1080p</span>
+                            <span>🎨 Quality Mode</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-thumbnail">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="example-content">
+                        <h4>City Nightscape</h4>
+                        <p class="example-prompt">"City lights at night with time-lapse effect"</p>
+                        <div class="example-meta">
+                            <span>⏱️ 8s</span>
+                            <span>📐 1080p</span>
+                            <span>⚡ Fast Mode</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need for professional video generation</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Generate videos in under 10 seconds with our optimized pipeline</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>High Quality</h3>
+                    <p>1080p HD output with smooth 60 FPS motion</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced algorithms for realistic results</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Easy to Use</h3>
+                    <p>Simple interface, powerful results</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔓</div>
+                    <h3>Open Source</h3>
+                    <p>Free to use, modify, and distribute</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Web-Based</h3>
+                    <p>No installation required, works in browser</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="brand-icon">⚡</div>
+                    <span class="brand-text">NEXUS<span class="accent">VISION</span></span>
+                </div>
+                <p class="footer-text">Transforming imagination into reality</p>
+                <div class="footer-links">
+                    <a href="https://github.com/Prajwal0422/Text-to-Video-Finetuning-Enhanced" target="_blank">GitHub</a>
+                    <a href="#features">Features</a>
+                    <a href="#dashboard">Dashboard</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 NEXUS VISION. Built with AI. Open Source.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app_v3.js"></script>
+</body>
+</html>
