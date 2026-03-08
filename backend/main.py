@@ -37,7 +37,7 @@ pexels_key = os.getenv('PEXELS_API_KEY', '2YmxczgDDvKxVncxrEtrnv82ksotaLFirswQk0
 video_gen = VideoGenerator(pexels_api_key=pexels_key)
 
 # Serve Static Files
-PROJECT_ROOT = os.path.dirname(os.getcwd())
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 app.mount("/frontend", StaticFiles(directory=os.path.join(PROJECT_ROOT, "frontend"), html=True), name="frontend")
 app.mount("/outputs", StaticFiles(directory=os.path.join(PROJECT_ROOT, "outputs")), name="outputs")
 
