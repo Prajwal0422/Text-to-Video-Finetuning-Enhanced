@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+*.md
+!README.md
+
+# Outputs (will be mounted as volume)
+outputs/
+
+# Cache
+.cache/
+
+# Backups
+backup_*/
+
+# OS
+.DS_Store
+Thumbs.db

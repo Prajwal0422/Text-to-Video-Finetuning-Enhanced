@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  nexus-vision:
+    build: .
+    container_name: nexus-vision
+    ports:
+      - "8000:8000"
+    environment:
+      - PEXELS_API_KEY=${PEXELS_API_KEY}
+      - PORT=8000
+      - HOST=0.0.0.0
+    volumes:
+      - ./outputs:/app/outputs
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    restart: unless-stopped
+    networks:
+      - nexus-network
+
+networks:
+  nexus-network:
+    driver: bridge

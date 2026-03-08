@@ -1,21 +1,40 @@
-"""Custom Exceptions for Video Generation"""
+"""
+NEXUS VISION - Custom Exceptions
+Centralized exception handling
+"""
 
-class VideoGenerationError(Exception):
-    """Base exception for video generation errors"""
+class NexusVisionException(Exception):
+    """Base exception for NEXUS VISION"""
     pass
 
-class GPUNotAvailableError(VideoGenerationError):
-    """Raised when GPU is required but not available"""
+class VideoGenerationError(NexusVisionException):
+    """Raised when video generation fails"""
     pass
 
-class InvalidMotionTypeError(VideoGenerationError):
-    """Raised when invalid motion type is specified"""
+class ClipFetchError(NexusVisionException):
+    """Raised when clip fetching fails"""
     pass
 
-class CacheError(VideoGenerationError):
+class ScriptGenerationError(NexusVisionException):
+    """Raised when script generation fails"""
+    pass
+
+class VideoEditingError(NexusVisionException):
+    """Raised when video editing fails"""
+    pass
+
+class APIKeyError(NexusVisionException):
+    """Raised when API key is invalid or missing"""
+    pass
+
+class ConfigurationError(NexusVisionException):
+    """Raised when configuration is invalid"""
+    pass
+
+class CacheError(NexusVisionException):
     """Raised when cache operations fail"""
     pass
 
-class CompressionError(VideoGenerationError):
-    """Raised when video compression fails"""
+class ValidationError(NexusVisionException):
+    """Raised when input validation fails"""
     pass
