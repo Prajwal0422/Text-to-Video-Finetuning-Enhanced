@@ -47,18 +47,18 @@ class ClipFetcher:
                 return cached_files[0]
         return None
     
-    def search_videos(self, keyword: str, per_page: int = 3) -> List[Dict]:
-        """Search for videos with timeout"""
+    def search_videos(self, query: str, per_page: int = 10) -> List[Dict]:
+        """Search for videos using FULL query with ranking"""
         if not self.api_key:
             print("⚠️  No Pexels API key. Using fallback.")
             return []
         
         try:
             params = {
-                'query': keyword,
-                'per_page': per_page,
+                'query': query,  # Use full query instead of single keyword
+                'per_page': per_page,  # Get more results for ranking
                 'orientation': 'landscape',
-                'size': 'small'
+                'size': 'medium'
             }
             
             response = requests.get(
@@ -70,33 +70,85 @@ class ClipFetcher:
             
             if response.status_code == 200:
                 data = response.json()
-                return data.get('videos', [])
+                videos = data.get('videos', [])
+                
+                # Rank videos by relevance
+                ranked_videos = self._rank_videos(videos, query)
+                return ranked_videos
             else:
                 print(f"⚠️  API error {response.status_code}")
                 return []
                 
         except requests.Timeout:
-            print(f"⏱️  Timeout searching for: {keyword}")
+            print(f"⏱️  Timeout searching for: {query}")
             return []
         except Exception as e:
             print(f"⚠️  Error: {e}")
             return []
     
-    def _select_smallest_video(self, video_files: List[Dict]) -> Optional[Dict]:
-        """Select smallest resolution video"""
+    def _rank_videos(self, videos: List[Dict], query: str) -> List[Dict]:
+        """Rank videos by keyword match, duration, and resolution"""
+        query_words = set(query.lower().split())
+        
+        scored_videos = []
+        for video in videos:
+            score = 0
+            
+            # 1. Keyword match score (most important)
+            video_tags = video.get('tags', [])
+            if isinstance(video_tags, list):
+                video_tags_lower = [tag.lower() for tag in video_tags]
+                matches = sum(1 for word in query_words if any(word in tag for tag in video_tags_lower))
+                score += matches * 10
+            
+            # 2. Duration score (prefer 4-10 seconds)
+            duration = video.get('duration', 0)
+            if 4 <= duration <= 10:
+                score += 5
+            elif duration > 10:
+                score += 2
+            
+            # 3. Resolution score (prefer HD but not too large)
+            video_files = video.get('video_files', [])
+            if video_files:
+                best_file = max(video_files, key=lambda x: x.get('width', 0))
+                width = best_file.get('width', 0)
+                if width >= 1280:  # HD
+                    score += 3
+                elif width >= 640:  # SD
+                    score += 2
+            
+            scored_videos.append((score, video))
+        
+        # Sort by score descending
+        scored_videos.sort(key=lambda x: x[0], reverse=True)
+        
+        # Return videos only
+        return [video for score, video in scored_videos]
+    
+    def _select_best_video_file(self, video_files: List[Dict]) -> Optional[Dict]:
+        """Select best quality video file (prefer landscape, good resolution)"""
         if not video_files:
             return None
         
-        # Filter for small videos
-        small_videos = [vf for vf in video_files if vf.get('width', 9999) <= 640]
+        # Filter for landscape videos (width > height)
+        landscape_videos = [vf for vf in video_files if vf.get('width', 0) > vf.get('height', 0)]
         
-        if small_videos:
-            small_videos.sort(key=lambda x: x.get('width', 9999) * x.get('height', 9999))
-            return small_videos[0]
+        if not landscape_videos:
+            landscape_videos = video_files
         
-        # Fallback
-        video_files.sort(key=lambda x: x.get('width', 9999) * x.get('height', 9999))
-        return video_files[0]
+        # Filter for good duration (> 4 seconds implied by API)
+        # Prefer HD quality (640-1920 width)
+        good_quality = [vf for vf in landscape_videos if 640 <= vf.get('width', 0) <= 1920]
+        
+        if good_quality:
+            # Sort by resolution (prefer higher but not too large)
+            good_quality.sort(key=lambda x: abs(x.get('width', 0) - 1280))  # Prefer 720p
+            return good_quality[0]
+        
+        # Fallback: return smallest
+        landscape_videos.sort(key=lambda x: x.get('width', 0) * x.get('height', 0))
+        return landscape_videos[0]
     
     def download_clip(self, video_url: str, keyword: str) -> Optional[str]:
         """
@@ -173,35 +225,45 @@ class ClipFetcher:
                 os.remove(filepath)
             return None
     
-    def _fetch_single_clip(self, keyword: str) -> Optional[str]:
-        """Fetch a single clip with validation"""
-        # Check cache first
-        cached = self._get_cached_clip(keyword)
+    def _fetch_single_clip(self, scene: Dict) -> Optional[str]:
+        """Fetch a single clip using full scene query"""
+        # Use full query from scene
+        query = scene.get('query', '')
+        if not query:
+            keywords = scene.get('keywords', [])
+            query = ' '.join(keywords) if keywords else 'nature'
+        
+        # Check cache first (use first keyword for cache key)
+        keywords = scene.get('keywords', [])
+        cache_keyword = keywords[0] if keywords else query.split()[0]
+        cached = self._get_cached_clip(cache_keyword)
         if cached:
             return cached
         
-        # Search for videos
-        videos = self.search_videos(keyword, per_page=3)
+        # Search for videos using full query
+        print(f"🔍 Searching: '{query}'")
+        videos = self.search_videos(query, per_page=10)
         
         if not videos:
             # Fail-fast: Try fallback
             fallback_keywords = ['nature', 'landscape', 'sky', 'water']
             for fallback in fallback_keywords:
-                if fallback != keyword:
+                if fallback not in query:
                     print(f"🔄 Trying fallback: {fallback}")
-                    videos = self.search_videos(fallback, per_page=2)
+                    videos = self.search_videos(fallback, per_page=5)
                     if videos:
-                        keyword = fallback
+                        cache_keyword = fallback
                         break
         
         if not videos:
             return None
         
+        # Use best ranked video (first one after ranking)
         video = videos[0]
         video_files = video.get('video_files', [])
         
-        # Select smallest resolution
-        selected = self._select_smallest_video(video_files)
+        # Select best quality video file
+        selected = self._select_best_video_file(video_files)
         
         if not selected:
             return None
@@ -211,11 +273,11 @@ class ClipFetcher:
             return None
         
         # Download with proper streaming
-        return self.download_clip(video_url, keyword)
+        return self.download_clip(video_url, cache_keyword)
     
     def fetch_clips_for_scenes(self, scenes: List[Dict]) -> List[str]:
         """
-        Fetch clips in PARALLEL with validation
+        Fetch clips in PARALLEL using full scene queries
         Returns only valid, non-corrupted clips
         """
         # Max 3 clips
@@ -229,15 +291,12 @@ class ClipFetcher:
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             future_to_scene = {}
             for scene in scenes:
-                keywords = scene.get('keywords', [])
-                if keywords:
-                    keyword = keywords[0]
-                    future = executor.submit(self._fetch_single_clip, keyword)
-                    future_to_scene[future] = keyword
+                future = executor.submit(self._fetch_single_clip, scene)
+                future_to_scene[future] = scene.get('query', 'scene')
             
             # Collect results
             for future in as_completed(future_to_scene):
-                keyword = future_to_scene[future]
+                query = future_to_scene[future]
                 try:
                     filepath = future.result()
                     if filepath and os.path.exists(filepath):
@@ -247,14 +306,15 @@ class ClipFetcher:
                         else:
                             print(f"⚠️  Skipping corrupted file: {filepath}")
                 except Exception as e:
-                    print(f"❌ Failed to fetch {keyword}: {e}")
+                    print(f"❌ Failed to fetch '{query}': {e}")
         
         print(f"✅ Downloaded {len(downloaded_clips)}/{len(scenes)} valid clips")
         
         # Ensure at least 1 clip
         if not downloaded_clips:
             print("⚠️  No clips downloaded, trying emergency fallback")
-            fallback = self._fetch_single_clip('nature')
+            fallback_scene = {'query': 'nature landscape', 'keywords': ['nature']}
+            fallback = self._fetch_single_clip(fallback_scene)
             if fallback and os.path.exists(fallback):
                 downloaded_clips.append(fallback)
         
