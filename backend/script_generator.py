@@ -1,71 +1,148 @@
 """
-Script Generator - Converts text prompts into scene descriptions
-Uses simple keyword extraction and scene breakdown
+NEXUS VISION - Smart Scene Generator
+Generates contextual scenes that match prompt semantics
 """
 
 import re
-from typing import List, Dict
+from typing import List, Dict, Set
 
 class ScriptGenerator:
     def __init__(self):
-        self.scene_templates = [
-            "establishing shot of {subject}",
-            "close-up of {subject}",
-            "wide angle view of {subject}",
-            "{subject} in motion",
-            "detailed view of {subject}"
-        ]
-    
-    def extract_keywords(self, prompt: str) -> List[str]:
-        """Extract visual keywords from prompt"""
-        # Remove common words
-        stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 
-                     'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
-                     'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-                     'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that'}
+        # Context words for different categories
+        self.context_words = {
+            'traffic': ['highway', 'road', 'cars', 'vehicles', 'busy', 'congestion', 'jam'],
+            'nature': ['landscape', 'scenic', 'natural', 'outdoor', 'environment', 'wild'],
+            'city': ['urban', 'downtown', 'street', 'buildings', 'metropolitan', 'skyline'],
+            'water': ['ocean', 'sea', 'waves', 'beach', 'coast', 'shore', 'lake'],
+            'sky': ['clouds', 'sunset', 'sunrise', 'aerial', 'atmosphere', 'horizon'],
+            'people': ['crowd', 'person', 'human', 'walking', 'activity', 'group'],
+            'motion': ['moving', 'fast', 'slow', 'flowing', 'dynamic', 'speed']
+        }
         
-        # Clean and split
+        # Motion verbs
+        self.motion_verbs = {
+            'moving', 'driving', 'walking', 'running', 'flying', 'flowing', 
+            'falling', 'rising', 'traveling', 'cruising', 'racing'
+        }
+    
+    def extract_nouns_and_verbs(self, prompt: str) -> Dict[str, List[str]]:
+        """Extract nouns and verbs from prompt"""
         words = re.findall(r'\b[a-z]+\b', prompt.lower())
-        keywords = [w for w in words if w not in stop_words and len(w) > 3]
         
-        # Return top keywords (max 5)
-        return keywords[:5] if keywords else ['nature', 'landscape']
+        # Stop words to remove
+        stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 
+                     'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were'}
+        
+        # Extract verbs (motion words)
+        verbs = [w for w in words if w in self.motion_verbs]
+        
+        # Extract nouns (content words not in stop words)
+        nouns = [w for w in words if w not in stop_words and w not in self.motion_verbs and len(w) > 3]
+        
+        return {
+            'nouns': nouns[:5],
+            'verbs': verbs[:3]
+        }
     
-    def generate_scenes(self, prompt: str) -> List[Dict[str, str]]:
-        """Generate 3 scene descriptions from prompt (OPTIMIZED: Max 3 scenes)"""
-        keywords = self.extract_keywords(prompt)
+    def add_context_words(self, base_words: List[str]) -> List[str]:
+        """Add relevant context words based on base words"""
+        context = set()
+        
+        for word in base_words:
+            for category, related_words in self.context_words.items():
+                if word in related_words or category in word or word in category:
+                    context.update(related_words[:2])
+        
+        return list(context)[:3]
+    
+    def generate_scenes(self, prompt: str) -> List[Dict[str, any]]:
+        """Generate 3 structured scene queries"""
+        # Extract linguistic components
+        components = self.extract_nouns_and_verbs(prompt)
+        nouns = components['nouns']
+        verbs = components['verbs']
+        
+        if not nouns:
+            nouns = ['nature', 'landscape']
         
         scenes = []
         
-        # Generate scenes based on keywords (MAX 3)
-        for i, keyword in enumerate(keywords[:3]):  # LIMIT: Only 3 scenes
-            scene = {
-                'id': i + 1,
-                'description': f"Scene showing {keyword}",
-                'keywords': [keyword],
-                'duration': 3.0  # 3 seconds per clip
-            }
-            scenes.append(scene)
+        # Scene 1: Primary subject with main action
+        scene1_words = []
+        if nouns:
+            scene1_words.append(nouns[0])
+        if verbs:
+            scene1_words.append(verbs[0])
+        if len(nouns) > 1:
+            scene1_words.append(nouns[1])
         
-        # Ensure at least 2 scenes
-        while len(scenes) < 2:
-            scenes.append({
-                'id': len(scenes) + 1,
-                'description': f"Scene showing {keywords[0] if keywords else 'nature'}",
-                'keywords': keywords[:1] if keywords else ['nature'],
-                'duration': 3.0
-            })
+        # Add context
+        context1 = self.add_context_words(scene1_words)
+        scene1_words.extend(context1[:1])
+        
+        scenes.append({
+            'id': 1,
+            'query': ' '.join(scene1_words[:4]),
+            'keywords': scene1_words[:4],
+            'duration': 3.0,
+            'description': f"Primary: {' '.join(scene1_words[:3])}"
+        })
+        
+        # Scene 2: Secondary perspective with context
+        scene2_words = []
+        if len(nouns) > 1:
+            scene2_words.append(nouns[1])
+        elif nouns:
+            scene2_words.append(nouns[0])
+        
+        # Add different context
+        context2 = self.add_context_words(nouns)
+        scene2_words.extend([w for w in context2 if w not in scene2_words][:2])
+        
+        if nouns and nouns[0] not in scene2_words:
+            scene2_words.append(nouns[0])
+        
+        scenes.append({
+            'id': 2,
+            'query': ' '.join(scene2_words[:4]),
+            'keywords': scene2_words[:4],
+            'duration': 3.0,
+            'description': f"Context: {' '.join(scene2_words[:3])}"
+        })
+        
+        # Scene 3: Variation with action
+        scene3_words = []
+        if verbs:
+            scene3_words.append(verbs[0])
+        if nouns:
+            scene3_words.append(nouns[0])
+        
+        # Add more context
+        remaining_nouns = [n for n in nouns if n not in scene3_words]
+        scene3_words.extend(remaining_nouns[:2])
+        
+        scenes.append({
+            'id': 3,
+            'query': ' '.join(scene3_words[:4]),
+            'keywords': scene3_words[:4],
+            'duration': 3.0,
+            'description': f"Action: {' '.join(scene3_words[:3])}"
+        })
         
         return scenes
     
     def generate_script(self, prompt: str) -> Dict:
         """Main method to generate complete script"""
-        keywords = self.extract_keywords(prompt)
         scenes = self.generate_scenes(prompt)
+        
+        # Extract all unique keywords
+        all_keywords = set()
+        for scene in scenes:
+            all_keywords.update(scene['keywords'])
         
         return {
             'prompt': prompt,
-            'keywords': keywords,
+            'keywords': list(all_keywords),
             'scenes': scenes,
             'total_duration': sum(s['duration'] for s in scenes)
         }
