@@ -226,43 +226,111 @@ class ClipFetcher:
             return None
     
     def _fetch_single_clip(self, scene: Dict) -> Optional[str]:
-        """Fetch a single clip using full scene query"""
-        # Use full query from scene
-        query = scene.get('query', '')
-        if not query:
+        """
+        UPGRADED: Multi-query video search with ranking
+        Runs 3 search queries per scene, collects top 5 videos each, ranks all candidates
+        """
+        # Primary query
+        primary_query = scene.get('query', '')
+        if not primary_query:
             keywords = scene.get('keywords', [])
-            query = ' '.join(keywords) if keywords else 'nature'
+            primary_query = ' '.join(keywords) if keywords else 'nature'
         
-        # Check cache first (use first keyword for cache key)
+        # Check cache first
         keywords = scene.get('keywords', [])
-        cache_keyword = keywords[0] if keywords else query.split()[0]
+        cache_keyword = keywords[0] if keywords else primary_query.split()[0]
         cached = self._get_cached_clip(cache_keyword)
         if cached:
             return cached
         
-        # Search for videos using full query
-        print(f"🔍 Searching: '{query}'")
-        videos = self.search_videos(query, per_page=10)
+        # PHASE 2: Multi-query search
+        # Prepare 3 search queries
+        search_queries = [primary_query]
         
-        if not videos:
-            # Fail-fast: Try fallback
-            fallback_keywords = ['nature', 'landscape', 'sky', 'water']
-            for fallback in fallback_keywords:
-                if fallback not in query:
-                    print(f"🔄 Trying fallback: {fallback}")
+        # Add alternative queries if available
+        alternative_queries = scene.get('alternative_queries', [])
+        if alternative_queries:
+            search_queries.extend(alternative_queries[:2])  # Add up to 2 more
+        else:
+            # Generate variations from keywords
+            if len(keywords) >= 2:
+                search_queries.append(' '.join(keywords[:2]))
+            if len(keywords) >= 3:
+                search_queries.append(' '.join([keywords[0], keywords[2]]))
+        
+        # Limit to 3 queries
+        search_queries = search_queries[:3]
+        
+        print(f"🔍 Multi-query search for scene {scene.get('id', '?')}")
+        
+        # Collect videos from all queries
+        all_videos = []
+        for i, query in enumerate(search_queries, 1):
+            print(f"  Query {i}/3: '{query}'")
+            videos = self.search_videos(query, per_page=5)  # Top 5 per query
+            if videos:
+                print(f"    Found {len(videos)} videos")
+                all_videos.extend(videos)
+            else:
+                print(f"    No results")
+        
+        # Remove duplicates by video ID
+        unique_videos = {}
+        for video in all_videos:
+            video_id = video.get('id')
+            if video_id and video_id not in unique_videos:
+                unique_videos[video_id] = video
+        
+        all_videos = list(unique_videos.values())
+        print(f"  Total unique candidates: {len(all_videos)}")
+        
+        # Fallback if no videos found
+        if not all_videos:
+            print(f"🔄 No results, trying themed fallback")
+            # Determine theme from primary query
+            theme_fallbacks = {
+                'military': ['military training', 'army vehicles', 'soldiers marching'],
+                'nature': ['nature landscape', 'scenic outdoor', 'natural environment'],
+                'city': ['urban street', 'city traffic', 'downtown buildings'],
+                'action': ['motion dynamic', 'fast movement', 'action scene']
+            }
+            
+            # Try to match theme
+            for theme, fallbacks in theme_fallbacks.items():
+                if theme in primary_query.lower():
+                    for fallback in fallbacks:
+                        print(f"  Trying: '{fallback}'")
+                        videos = self.search_videos(fallback, per_page=5)
+                        if videos:
+                            all_videos = videos
+                            cache_keyword = fallback.split()[0]
+                            break
+                    if all_videos:
+                        break
+            
+            # Generic fallback
+            if not all_videos:
+                generic_fallbacks = ['nature landscape', 'scenic view', 'outdoor scene']
+                for fallback in generic_fallbacks:
                     videos = self.search_videos(fallback, per_page=5)
                     if videos:
-                        cache_keyword = fallback
+                        all_videos = videos
+                        cache_keyword = fallback.split()[0]
                         break
         
-        if not videos:
+        if not all_videos:
+            print(f"❌ No videos found after all attempts")
             return None
         
-        # Use best ranked video (first one after ranking)
-        video = videos[0]
-        video_files = video.get('video_files', [])
+        # Rank all candidates
+        print(f"  Ranking {len(all_videos)} candidates...")
+        ranked_videos = self._rank_videos(all_videos, primary_query)
         
-        # Select best quality video file
+        # Select best video
+        video = ranked_videos[0]
+        print(f"  ✅ Selected best match (score-based)")
+        
+        video_files = video.get('video_files', [])
         selected = self._select_best_video_file(video_files)
         
         if not selected:
