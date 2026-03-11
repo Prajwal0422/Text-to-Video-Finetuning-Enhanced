@@ -1,0 +1,295 @@
+/* Alert Component */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    animation: alert-slide-in 0.3s ease-out;
+}
+
+@keyframes alert-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Alert Variants */
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--error);
+    color: var(--error);
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+.alert-info {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Alert Icon */
+.alert-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Alert Content */
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+}
+
+.alert-message {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+/* Alert Close Button */
+.alert-close {
+    background: none;
+    border: none;
+    color: currentColor;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.alert-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Solid Alerts */
+.alert-solid {
+    color: white;
+}
+
+.alert-success.alert-solid {
+    background: var(--success);
+    border-color: var(--success);
+}
+
+.alert-error.alert-solid {
+    background: var(--error);
+    border-color: var(--error);
+}
+
+.alert-warning.alert-solid {
+    background: var(--warning);
+    border-color: var(--warning);
+}
+
+.alert-info.alert-solid {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.alert-solid .alert-title {
+    color: white;
+}
+
+/* Outline Alerts */
+.alert-outline {
+    background: transparent;
+    border: 2px solid;
+}
+
+.alert-success.alert-outline {
+    border-color: var(--success);
+}
+
+.alert-error.alert-outline {
+    border-color: var(--error);
+}
+
+.alert-warning.alert-outline {
+    border-color: var(--warning);
+}
+
+.alert-info.alert-outline {
+    border-color: var(--primary);
+}
+
+/* Alert with Actions */
+.alert-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.alert-action-btn {
+    padding: 0.375rem 0.75rem;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 6px;
+    color: currentColor;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.alert-action-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.alert-solid .alert-action-btn {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.alert-solid .alert-action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Compact Alert */
+.alert-compact {
+    padding: 0.75rem 1rem;
+}
+
+.alert-compact .alert-icon {
+    font-size: 1.125rem;
+}
+
+.alert-compact .alert-title {
+    font-size: 0.875rem;
+}
+
+.alert-compact .alert-message {
+    font-size: 0.75rem;
+}
+
+/* Banner Alert */
+.alert-banner {
+    border-radius: 0;
+    border-left: none;
+    border-top: 4px solid;
+    margin-bottom: 0;
+}
+
+/* Dismissible Alert */
+.alert-dismissible {
+    position: relative;
+    padding-right: 3rem;
+}
+
+.alert-dismissible .alert-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+/* Alert with Progress */
+.alert-progress {
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-progress::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    animation: alert-progress-bar 5s linear forwards;
+}
+
+@keyframes alert-progress-bar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Alert List */
+.alert-list {
+    margin-top: 0.75rem;
+    padding-left: 1.25rem;
+}
+
+.alert-list li {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+/* Floating Alert */
+.alert-floating {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    max-width: 400px;
+    z-index: 10000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Alert Animation Variants */
+.alert-fade-out {
+    animation: alert-fade-out 0.3s ease-out forwards;
+}
+
+@keyframes alert-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive Alerts */
+@media (max-width: 768px) {
+    .alert {
+        padding: 0.875rem 1rem;
+    }
+    
+    .alert-floating {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+    
+    .alert-actions {
+        flex-direction: column;
+    }
+    
+    .alert-action-btn {
+        width: 100%;
+    }
+}
