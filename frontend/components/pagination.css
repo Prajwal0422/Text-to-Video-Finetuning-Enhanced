@@ -1,0 +1,291 @@
+/* Pagination Component */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.pagination-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.pagination-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.pagination-item.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.pagination-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Pagination Arrows */
+.pagination-prev,
+.pagination-next {
+    font-size: 1rem;
+}
+
+/* Pagination Ellipsis */
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* Compact Pagination */
+.pagination-compact .pagination-item {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+/* Large Pagination */
+.pagination-lg .pagination-item {
+    min-width: 48px;
+    height: 48px;
+    font-size: 1rem;
+}
+
+/* Rounded Pagination */
+.pagination-rounded .pagination-item {
+    border-radius: 50%;
+    min-width: 40px;
+    width: 40px;
+    padding: 0;
+}
+
+/* Outlined Pagination */
+.pagination-outlined .pagination-item {
+    background: transparent;
+}
+
+.pagination-outlined .pagination-item.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Simple Pagination */
+.pagination-simple {
+    gap: 1rem;
+}
+
+.pagination-simple .pagination-item {
+    border: none;
+    background: transparent;
+}
+
+.pagination-simple .pagination-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+}
+
+/* Pagination with Info */
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.pagination-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-select {
+    padding: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.pagination-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Pagination with Jump */
+.pagination-jump {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-jump-input {
+    width: 60px;
+    padding: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.pagination-jump-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.pagination-jump-btn {
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pagination-jump-btn:hover {
+    background: var(--secondary);
+}
+
+/* Pagination Variants */
+.pagination-primary .pagination-item.active {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.pagination-success .pagination-item.active {
+    background: var(--success);
+    border-color: var(--success);
+}
+
+.pagination-warning .pagination-item.active {
+    background: var(--warning);
+    border-color: var(--warning);
+}
+
+.pagination-error .pagination-item.active {
+    background: var(--error);
+    border-color: var(--error);
+}
+
+/* Pagination with Icons */
+.pagination-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* Mobile Pagination */
+.pagination-mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        display: none;
+    }
+    
+    .pagination-mobile {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .pagination-mobile-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .pagination-mobile-btn:hover {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: var(--primary);
+    }
+    
+    .pagination-mobile-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .pagination-mobile-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+}
+
+/* Pagination Loading State */
+.pagination-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.pagination-loading .pagination-item {
+    animation: pagination-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pagination-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Pagination Animation */
+.pagination-item-enter {
+    animation: pagination-item-enter 0.3s ease-out;
+}
+
+@keyframes pagination-item-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
