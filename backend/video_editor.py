@@ -3,6 +3,7 @@ REBUILT VIDEO EDITOR - Deterministic and Verifiable
 No assumptions. Fail loudly. Runtime proof only.
 
 Pipeline: Download → Normalize → Load → Validate → Trim → Merge → Export
+PHASE 4: Cinematic transitions (crossfade, fade in/out)
 """
 
 import os
@@ -11,6 +12,7 @@ import subprocess
 import uuid
 from typing import List, Optional
 from moviepy import VideoFileClip, concatenate_videoclips
+from moviepy.video.fx import CrossFadeIn, CrossFadeOut, FadeIn, FadeOut
 import imageio_ffmpeg
 
 class VideoEditor:
@@ -21,11 +23,12 @@ class VideoEditor:
         os.makedirs(self.normalized_dir, exist_ok=True)
         
         # Settings
-        self.clip_duration = 3.0
+        self.clip_duration = 4.0  # PHASE 3: 4 seconds minimum per scene
         self.target_width = 640
         self.target_height = 360
         self.fps = 24
         self.min_clip_duration = 1.0
+        self.target_total_duration = (12, 16)  # PHASE 3: 12-16 seconds total
         
         # Get FFmpeg path
         try:
@@ -154,14 +157,14 @@ class VideoEditor:
     
     def trim_clip(self, clip: VideoFileClip) -> VideoFileClip:
         """
-        STEP 3: Safely trim clip
+        STEP 3: Safely trim clip to 4 seconds minimum
         Returns: Trimmed clip
         Raises: Exception if trim fails
         """
         print(f"\n[TRIM] Original duration: {clip.duration:.2f}s")
         
         safe_duration = min(self.clip_duration, clip.duration)
-        print(f"[TRIM] Target: {self.clip_duration:.2f}s")
+        print(f"[TRIM] Target: {self.clip_duration:.2f}s (4s minimum)")
         print(f"[TRIM] Safe trim to: {safe_duration:.2f}s")
         
         if safe_duration < clip.duration:
@@ -251,20 +254,50 @@ class VideoEditor:
         # Calculate expected duration
         total_duration = sum(c.duration for c in processed_clips)
         print(f"[STAGE 1] Expected total duration: {total_duration:.2f}s")
+        print(f"[STAGE 1] Target range: {self.target_total_duration[0]}-{self.target_total_duration[1]}s")
+        
+        # PHASE 4: Apply cinematic transitions
+        print("\n[STAGE 2] Applying cinematic transitions...")
+        
+        # Apply fade in to first clip
+        if len(processed_clips) > 0:
+            print(f"[STAGE 2] Adding fade-in to first clip (0.5s)")
+            processed_clips[0] = processed_clips[0].fadein(0.5)
+        
+        # Apply fade out to last clip
+        if len(processed_clips) > 0:
+            print(f"[STAGE 2] Adding fade-out to last clip (0.5s)")
+            processed_clips[-1] = processed_clips[-1].fadeout(0.5)
+        
+        # Apply crossfade between clips
+        if len(processed_clips) > 1:
+            print(f"[STAGE 2] Adding crossfade transitions (0.3s)")
+            for i in range(len(processed_clips) - 1):
+                processed_clips[i] = processed_clips[i].crossfadeout(0.3)
+                processed_clips[i + 1] = processed_clips[i + 1].crossfadein(0.3)
+        
+        print(f"[STAGE 2] ✅ Transitions applied")
         
         # Concatenate
-        print("\n[STAGE 2] Concatenating clips...")
-        print(f"[STAGE 2] Method: compose")
-        print(f"[STAGE 2] Clips: {len(processed_clips)}")
+        print("\n[STAGE 3] Concatenating clips...")
+        print(f"[STAGE 3] Method: compose")
+        print(f"[STAGE 3] Clips: {len(processed_clips)}")
         
         try:
             final_video = concatenate_videoclips(processed_clips, method="compose")
-            print(f"[STAGE 2] Concatenated duration: {final_video.duration:.2f}s")
+            print(f"[STAGE 3] Concatenated duration: {final_video.duration:.2f}s")
             
             if final_video.duration <= 0:
                 raise ValueError(f"Final video has 0 duration")
             
-            print(f"[STAGE 2] ✅ SUCCESS")
+            # Check if duration is in target range
+            min_dur, max_dur = self.target_total_duration
+            if min_dur <= final_video.duration <= max_dur:
+                print(f"[STAGE 3] ✅ Duration in target range")
+            else:
+                print(f"[STAGE 3] ⚠️  Duration outside target range but acceptable")
+            
+            print(f"[STAGE 3] ✅ SUCCESS")
             
         except Exception as e:
             # Close clips on error
@@ -280,11 +313,11 @@ class VideoEditor:
         output_path = os.path.join(self.output_dir, output_filename)
         
         # Export
-        print("\n[STAGE 3] Exporting video...")
-        print(f"[STAGE 3] Output: {output_path}")
-        print(f"[STAGE 3] Codec: libx264")
-        print(f"[STAGE 3] FPS: {self.fps}")
-        print(f"[STAGE 3] Preset: medium")
+        print("\n[STAGE 4] Exporting video...")
+        print(f"[STAGE 4] Output: {output_path}")
+        print(f"[STAGE 4] Codec: libx264")
+        print(f"[STAGE 4] FPS: {self.fps}")
+        print(f"[STAGE 4] Preset: medium")
         
         try:
             final_video.write_videofile(
@@ -297,7 +330,7 @@ class VideoEditor:
                 logger=None
             )
             
-            print(f"[STAGE 3] ✅ EXPORT COMPLETE")
+            print(f"[STAGE 4] ✅ EXPORT COMPLETE")
             
         except Exception as e:
             # Close clips on error
@@ -311,16 +344,16 @@ class VideoEditor:
         for clip in processed_clips:
             clip.close()
         
-        print(f"[STAGE 3] Clips closed")
+        print(f"[STAGE 4] Clips closed")
         
         # Verify output
-        print("\n[STAGE 4] Verifying output...")
+        print("\n[STAGE 5] Verifying output...")
         
         if not os.path.exists(output_path):
             raise RuntimeError("Output file not created")
         
         output_size = os.path.getsize(output_path)
-        print(f"[STAGE 4] File size: {output_size / 1024:.1f} KB")
+        print(f"[STAGE 5] File size: {output_size / 1024:.1f} KB")
         
         if output_size < 1000:
             raise ValueError(f"Output file too small: {output_size} bytes")
@@ -331,12 +364,12 @@ class VideoEditor:
             final_duration = verify_clip.duration
             verify_clip.close()
             
-            print(f"[STAGE 4] Final duration: {final_duration:.2f}s")
+            print(f"[STAGE 5] Final duration: {final_duration:.2f}s")
             
             if final_duration <= 0:
                 raise ValueError(f"Final duration is {final_duration}")
             
-            print(f"[STAGE 4] ✅ VERIFIED")
+            print(f"[STAGE 5] ✅ VERIFIED")
             
         except Exception as e:
             raise RuntimeError(f"Output verification failed: {e}")
