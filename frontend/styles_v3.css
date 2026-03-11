@@ -467,10 +467,29 @@ body {
     min-height: 100px;
 }
 
+.prompt-guidance {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 8px;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.prompt-guidance svg {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
 .char-count {
     font-size: 0.75rem;
     color: var(--text-muted);
     text-align: right;
+    margin-top: 0.5rem;
 }
 
 .form-row {
