@@ -1,14 +1,16 @@
 """
 Video Generator - Main orchestration engine
 Coordinates script generation, clip fetching, and video editing
+UPGRADED: Integrated Visual Intent Mapper for semantic prompt expansion
 
 This module serves as the main entry point for video generation,
 orchestrating the entire pipeline from text prompt to final video output.
 
 Key Features:
+- Visual intent mapping for semantic prompt expansion
 - Script generation from text prompts
-- Automatic clip fetching from Pexels API
-- Video editing and composition
+- Multi-query clip fetching from Pexels API
+- Cinematic video editing with transitions
 - Progress tracking and callbacks
 - Error handling and recovery
 
@@ -24,9 +26,11 @@ from typing import Dict, Optional
 try:
     from .script_generator import ScriptGenerator
     from .clip_fetcher import ClipFetcher
+    from .visual_intent_mapper import VisualIntentMapper
 except ImportError:
     from script_generator import ScriptGenerator
     from clip_fetcher import ClipFetcher
+    from visual_intent_mapper import VisualIntentMapper
 
 # Try to import moviepy-based editor, fallback to simple editor
 # MoviePy provides advanced video editing capabilities
@@ -66,10 +70,12 @@ class VideoGenerator:
                           If not provided, will attempt to load from environment
         
         Initializes:
+            - Visual intent mapper for semantic prompt expansion
             - Script generator for prompt-to-scene conversion
             - Clip fetcher for downloading video clips
             - Video editor for final composition
         """
+        self.visual_mapper = VisualIntentMapper()
         self.script_gen = ScriptGenerator()
         self.clip_fetcher = ClipFetcher(api_key=pexels_api_key)
         self.video_editor = VideoEditor()
@@ -77,29 +83,35 @@ class VideoGenerator:
     def generate(self, prompt: str, progress_callback=None) -> Dict:
         """
         Main video generation pipeline - orchestrates all stages
+        UPGRADED: Now uses Visual Intent Mapper for semantic expansion
         
         This is the primary method that coordinates the entire video generation
         process from text prompt to final video file.
         
         Pipeline Stages:
-        1. Script Generation (1-2s)
+        1. Visual Intent Mapping (< 1s)
+           - Converts prompt into cinematic visual queries
+           - Expands semantic meaning for better clip matching
+           - Generates 5 search queries per prompt
+        
+        2. Script Generation (1-2s)
            - Analyzes prompt and extracts keywords
            - Generates structured scene descriptions
            - Determines optimal scene count and duration
         
-        2. Clip Fetching (10-15s)
-           - Searches Pexels API for relevant clips
+        3. Multi-Query Clip Fetching (10-15s)
+           - Runs 3 search queries per scene
            - Downloads and caches video clips
-           - Normalizes clip formats and resolutions
+           - Ranks candidates by relevance
         
-        3. Video Composition (5-10s)
-           - Merges clips with transitions
-           - Applies effects and filters
-           - Exports final video file
+        4. Cinematic Video Composition (5-10s)
+           - Merges clips with crossfade transitions
+           - Applies fade in/out effects
+           - Exports final video (12-16s duration)
         
         Args:
             prompt: Text description of desired video content
-                   Example: "A beautiful sunset over mountains"
+                   Example: "two countries doing a war and soldiers struggling"
             progress_callback: Optional callback function(progress, message)
                              Called at each stage with progress percentage (0-100)
                              and status message
@@ -127,53 +139,66 @@ class VideoGenerator:
         
         try:
             # ============================================================
-            # STAGE 1: SCRIPT GENERATION (1-2 seconds)
+            # STAGE 1: VISUAL INTENT MAPPING (< 1 second)
             # ============================================================
-            # Convert text prompt into structured scene descriptions
-            # This stage analyzes the prompt and generates:
-            # - Scene descriptions with keywords
-            # - Optimal scene count (typically 3-5 scenes)
-            # - Duration per scene
-            # - Search keywords for clip fetching
+            # NEW: Convert prompt into semantic visual search queries
+            # This stage expands the prompt meaning to improve clip matching
+            
+            if progress_callback:
+                progress_callback(5, "Mapping visual intent...")
+            
+            print("🎬 Step 1: Visual Intent Mapping...")
+            scenes = self.visual_mapper.map_prompt_to_scenes(prompt)
+            print(f"✅ Generated {len(scenes)} cinematic scenes with visual queries")
+            
+            # ============================================================
+            # STAGE 2: SCRIPT GENERATION (1-2 seconds)
+            # ============================================================
+            # Generate script structure (kept for compatibility)
             
             if progress_callback:
                 progress_callback(10, "Generating script...")
             
-            print("📝 Step 1: Generating script...")
+            print("📝 Step 2: Generating script structure...")
             script = self.script_gen.generate_script(prompt)
-            print(f"✅ Generated {len(script['scenes'])} scenes")
+            
+            # Merge visual intent scenes with script
+            # Use visual intent scenes as they have better queries
+            script['scenes'] = scenes
+            print(f"✅ Script ready with {len(script['scenes'])} scenes")
             print(f"   Keywords: {', '.join(script['keywords'])}")
             
             # ============================================================
-            # STAGE 2: CLIP FETCHING (10-15 seconds)
+            # STAGE 3: MULTI-QUERY CLIP FETCHING (10-15 seconds)
             # ============================================================
-            # Download relevant video clips from Pexels API
-            # This is typically the longest stage due to:
-            # - API search requests
-            # - Video file downloads
-            # - Format normalization
+            # UPGRADED: Multi-query search with ranking
+            # - Runs 3 search queries per scene
+            # - Collects top 5 videos per query
+            # - Ranks all candidates by relevance
+            # - Downloads best matches
             # Clips are cached to speed up future generations
             
             if progress_callback:
                 progress_callback(30, "Fetching video clips...")
             
-            print("\n📥 Step 2: Fetching clips...")
+            print("\n📥 Step 3: Multi-query clip fetching...")
             clip_paths = self.clip_fetcher.fetch_clips_for_scenes(script['scenes'])
             print(f"✅ Downloaded {len(clip_paths)} clips")
             
             # ============================================================
-            # STAGE 3: VIDEO COMPOSITION (5-10 seconds)
+            # STAGE 4: CINEMATIC VIDEO COMPOSITION (5-10 seconds)
             # ============================================================
-            # Merge clips into final video with:
-            # - Smooth transitions between clips
-            # - Resolution normalization
-            # - Audio mixing (if applicable)
+            # UPGRADED: Cinematic editing with transitions
+            # - 4 seconds per scene minimum
+            # - Crossfade transitions between clips
+            # - Fade in at start, fade out at end
+            # - Target duration: 12-16 seconds
             # - Export to MP4 format
             
             if progress_callback:
-                progress_callback(60, "Creating video...")
+                progress_callback(60, "Creating cinematic video...")
             
-            print("\n🎬 Step 3: Creating video...")
+            print("\n🎬 Step 4: Cinematic video composition...")
             video_path = self.video_editor.create_video(
                 clip_paths=clip_paths,
                 prompt=prompt
