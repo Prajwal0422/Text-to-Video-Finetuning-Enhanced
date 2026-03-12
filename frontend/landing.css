@@ -813,3 +813,21 @@ section {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Examples Section */
+.examples-section {
+    background: var(--bg-primary);
+}
+
+.examples-section .features-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.examples-section .feature-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-tertiary));
+}
+
+.examples-section .feature-card:hover {
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-card));
+}
