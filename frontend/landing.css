@@ -703,3 +703,113 @@ section {
         flex-direction: column;
     }
 }
+
+/* Get Started Page Styles */
+.get-started-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 4rem;
+}
+
+.option-card {
+    padding: 3rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.option-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary);
+    box-shadow: 0 16px 48px rgba(99, 102, 241, 0.3);
+}
+
+.option-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.option-card h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.option-card p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+.option-card .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.quick-links {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(10px);
+}
+
+.quick-links h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.quick-link:hover {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+    color: var(--primary-light);
+    transform: translateY(-4px);
+}
+
+.quick-link span:first-child {
+    font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+    .get-started-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .links-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
