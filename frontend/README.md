@@ -39,3 +39,15 @@ Modern, responsive frontend for the NEXUS VISION AI-powered video generation pla
 - Animated gradient backgrounds
 - Real-time video generation
 - WebSocket-based progress updates
+
+
+## Quick Start
+
+1. Open `landing.html` in your browser for the main page
+2. Navigate to `get-started.html` to access dashboard options
+3. Use `dashboard.html` for video generation
+
+## Development
+
+No build process required - pure HTML, CSS, and JavaScript.
+Simply open the HTML files in a modern web browser.
