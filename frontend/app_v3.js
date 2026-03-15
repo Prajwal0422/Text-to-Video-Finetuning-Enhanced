@@ -85,8 +85,11 @@ document.querySelectorAll('.quick-prompt-btn').forEach(btn => {
 // Initialize WebSocket connection
 function connectWebSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/generate`;
+    const host = window.location.hostname;
+    const port = window.location.port || '8000';
+    const wsUrl = `${protocol}//${host}:${port}/ws/generate`;
     
+    console.log('Connecting to:', wsUrl);
     ws = new WebSocket(wsUrl);
     
     ws.onopen = () => {
