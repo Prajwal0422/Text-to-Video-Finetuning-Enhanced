@@ -26,21 +26,28 @@ class ScriptGenerator:
         }
     
     def extract_nouns_and_verbs(self, prompt: str) -> Dict[str, List[str]]:
-        """Extract nouns and verbs from prompt"""
+        """Extract nouns and verbs from prompt with improved detection"""
         words = re.findall(r'\b[a-z]+\b', prompt.lower())
         
         # Stop words to remove
         stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 
-                     'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were'}
+                     'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'be', 'been'}
+        
+        # Expanded motion verbs
+        motion_verbs = {
+            'moving', 'driving', 'walking', 'running', 'flying', 'flowing', 
+            'falling', 'rising', 'traveling', 'cruising', 'racing', 'swimming',
+            'jumping', 'dancing', 'fighting', 'struggling', 'working', 'playing'
+        }
         
         # Extract verbs (motion words)
-        verbs = [w for w in words if w in self.motion_verbs]
+        verbs = [w for w in words if w in motion_verbs]
         
         # Extract nouns (content words not in stop words)
-        nouns = [w for w in words if w not in stop_words and w not in self.motion_verbs and len(w) > 3]
+        nouns = [w for w in words if w not in stop_words and w not in motion_verbs and len(w) > 2]
         
         return {
-            'nouns': nouns[:5],
+            'nouns': nouns[:6],  # Get more nouns
             'verbs': verbs[:3]
         }
     
