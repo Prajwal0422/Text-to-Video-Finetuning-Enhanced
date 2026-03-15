@@ -140,6 +140,15 @@ function updateProgress(percent, message, step) {
     progressPercent.textContent = `${Math.round(percent)}%`;
     progressStatus.textContent = message || 'Generating...';
     progressStep.textContent = step || '';
+    
+    // Add visual feedback for different stages
+    if (percent < 30) {
+        progressFill.style.background = 'linear-gradient(90deg, #6366f1, #8b5cf6)';
+    } else if (percent < 60) {
+        progressFill.style.background = 'linear-gradient(90deg, #8b5cf6, #ec4899)';
+    } else {
+        progressFill.style.background = 'linear-gradient(90deg, #ec4899, #10b981)';
+    }
 }
 
 // Timer for elapsed time
