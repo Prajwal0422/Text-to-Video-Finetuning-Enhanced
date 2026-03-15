@@ -75,7 +75,19 @@ class VisualIntentMapper:
             'conflict': ['tension confrontation clash', 'conflict struggle action', 'opposing forces battle',
                         'conflict scene dramatic', 'confrontation tension'],
             'survival': ['endurance perseverance tough', 'survival challenge harsh', 'surviving difficult',
-                        'survival action extreme', 'endurance survival scene']
+                        'survival action extreme', 'endurance survival scene'],
+            
+            # Additional expansions for better coverage
+            'beautiful': ['scenic stunning gorgeous', 'beautiful landscape nature', 'aesthetic pleasing view',
+                         'beautiful scenery picturesque', 'gorgeous beautiful scene'],
+            'fast': ['speed motion quick', 'fast moving rapid', 'quick action speed',
+                    'fast motion blur', 'rapid fast movement'],
+            'slow': ['slow motion gentle', 'calm peaceful slow', 'slow movement smooth',
+                    'gentle slow motion', 'slow peaceful scene'],
+            'happy': ['joyful cheerful positive', 'happy people smiling', 'celebration joy happy',
+                     'happy mood positive', 'cheerful happy scene'],
+            'sad': ['melancholy emotional somber', 'sad mood atmosphere', 'emotional sad scene',
+                   'somber sad mood', 'sad emotional moment']
         }
         
         # Fallback themes for when no matches found
