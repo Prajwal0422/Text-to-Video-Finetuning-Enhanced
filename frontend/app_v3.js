@@ -230,7 +230,24 @@ function handleGenerationError(message) {
     `;
     
     progressSection.style.display = 'none';
-    alert(`Generation failed: ${message}`);
+    
+    // Show user-friendly error message
+    const errorMessages = {
+        'No prompt provided': 'Please enter a description for your video',
+        'API': 'Connection error. Please check your internet and try again',
+        'timeout': 'Generation took too long. Please try a simpler prompt',
+        'No clips found': 'Could not find matching videos. Try a different description'
+    };
+    
+    let userMessage = message;
+    for (const [key, value] of Object.entries(errorMessages)) {
+        if (message.includes(key)) {
+            userMessage = value;
+            break;
+        }
+    }
+    
+    alert(`Generation failed: ${userMessage}`);
 }
 
 // Update system status indicator
