@@ -179,10 +179,19 @@ class VideoGenerator:
             # Clips are cached to speed up future generations
             
             if progress_callback:
-                progress_callback(30, "Fetching video clips...")
+                progress_callback(30, "Searching for relevant video clips...")
             
             print("\n📥 Step 3: Multi-query clip fetching...")
+            print(f"   Searching for {len(script['scenes'])} scenes...")
+            
             clip_paths = self.clip_fetcher.fetch_clips_for_scenes(script['scenes'])
+            
+            if not clip_paths or len(clip_paths) == 0:
+                print("⚠️  No clips found, using fallback search...")
+                # Fallback: try with just keywords
+                fallback_scenes = [{'query': kw, 'keywords': [kw]} for kw in script['keywords'][:3]]
+                clip_paths = self.clip_fetcher.fetch_clips_for_scenes(fallback_scenes)
+            
             print(f"✅ Downloaded {len(clip_paths)} clips")
             
             # ============================================================
