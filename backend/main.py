@@ -14,12 +14,12 @@ import uvicorn
 from concurrent.futures import ThreadPoolExecutor
 import json
 
-from video_generator import VideoGenerator
+from resilient_video_generator import ResilientVideoGenerator
 
 # Load environment variables
 load_dotenv()
 
-app = FastAPI(title="NEXUS VISION API - Fast Video Generation")
+app = FastAPI(title="NEXUS VISION API - Resilient Video Generation")
 
 # Setup CORS
 app.add_middleware(
@@ -32,9 +32,9 @@ app.add_middleware(
 # Thread pool for video generation
 executor = ThreadPoolExecutor(max_workers=2)
 
-# Initialize video generator with API key
+# Initialize resilient video generator with API key
 pexels_key = os.getenv('PEXELS_API_KEY', '2YmxczgDDvKxVncxrEtrnv82ksotaLFirswQk0Xyhng0cgy6GBXbRPmq')
-video_gen = VideoGenerator(pexels_api_key=pexels_key)
+video_gen = ResilientVideoGenerator(pexels_api_key=pexels_key, timeout=60)
 
 # Serve Static Files
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -51,9 +51,15 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "online",
-        "method": "stock_footage_pipeline",
+        "method": "resilient_pipeline",
+        "features": ["retry", "fallback", "timeout", "local_mode"],
         "gpu_required": False
     }
+
+@app.get("/api/stats")
+async def get_stats():
+    """Get generation statistics"""
+    return video_gen.get_stats()
 
 @app.websocket("/ws/generate")
 async def websocket_endpoint(websocket: WebSocket):
@@ -127,9 +133,15 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("🚀 NEXUS VISION - Fast Video Generation API")
+    print("🚀 NEXUS VISION - Resilient Video Generation API")
     print("=" * 60)
-    print("Method: Stock Footage Pipeline")
+    print("Method: Resilient Pipeline")
+    print("Features:")
+    print("  ✓ Retry with exponential backoff (3 attempts)")
+    print("  ✓ Multi-model routing (primary → fallback → local)")
+    print("  ✓ 60-second timeout protection")
+    print("  ✓ Local generation fallback")
+    print("  ✓ Never fails completely")
     print("GPU Required: NO")
     print("Average Generation Time: < 30 seconds")
     print("=" * 60)
