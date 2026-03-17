@@ -141,13 +141,21 @@ function updateProgress(percent, message, step) {
     progressStatus.textContent = message || 'Generating...';
     progressStep.textContent = step || '';
     
+    // Add exciting animations
+    if (window.NexusAnimations) {
+        window.NexusAnimations.animateProgressBar(progressFill, percent);
+    }
+    
     // Add visual feedback for different stages
     if (percent < 30) {
         progressFill.style.background = 'linear-gradient(90deg, #6366f1, #8b5cf6)';
+        progressFill.classList.add('shimmer');
     } else if (percent < 60) {
         progressFill.style.background = 'linear-gradient(90deg, #8b5cf6, #ec4899)';
+        progressFill.classList.add('pulse-glow-strong');
     } else {
         progressFill.style.background = 'linear-gradient(90deg, #ec4899, #10b981)';
+        progressFill.classList.add('breathe');
     }
 }
 
@@ -181,6 +189,15 @@ function handleGenerationComplete(videoPath, duration, fileSize) {
     
     progressSection.style.display = 'none';
     resultSection.style.display = 'block';
+    
+    // Add celebration animations
+    if (window.NexusAnimations) {
+        window.NexusAnimations.createConfetti();
+        window.NexusAnimations.pulseElement(resultSection);
+    }
+    
+    // Add bounce animation to result section
+    resultSection.classList.add('bounce-in');
     
     resultVideo.src = videoPath;
     resultVideo.load();
