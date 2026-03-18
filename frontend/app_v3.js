@@ -393,3 +393,85 @@ if (promptInput) {
         }
     });
 }
+
+
+// Tech Stack Display Controller
+const TechStackDisplay = {
+    items: {
+        retry: document.getElementById('tech-retry'),
+        router: document.getElementById('tech-router'),
+        mapper: document.getElementById('tech-mapper'),
+        fetcher: document.getElementById('tech-fetcher'),
+        editor: document.getElementById('tech-editor')
+    },
+    
+    updateStatus(itemId, status, statusText) {
+        const item = this.items[itemId];
+        if (!item) return;
+        
+        // Remove all status classes
+        item.classList.remove('active', 'success', 'error');
+        
+        // Add new status class
+        if (status) {
+            item.classList.add(status);
+        }
+        
+        // Update status text
+        const statusSpan = item.querySelector('.tech-status');
+        if (statusSpan && statusText) {
+            statusSpan.textContent = statusText;
+        }
+    },
+    
+    reset() {
+        Object.keys(this.items).forEach(key => {
+            this.updateStatus(key, '', 'Standby');
+        });
+    },
+    
+    simulateProgress(percent) {
+        // Update tech stack based on progress
+        if (percent >= 5 && percent < 15) {
+            this.updateStatus('mapper', 'active', 'Analyzing...');
+        } else if (percent >= 15 && percent < 30) {
+            this.updateStatus('mapper', 'success', 'Complete');
+            this.updateStatus('router', 'active', 'Routing...');
+        } else if (percent >= 30 && percent < 70) {
+            this.updateStatus('router', 'success', 'Connected');
+            this.updateStatus('fetcher', 'active', 'Fetching...');
+        } else if (percent >= 70 && percent < 95) {
+            this.updateStatus('fetcher', 'success', 'Downloaded');
+            this.updateStatus('editor', 'active', 'Editing...');
+        } else if (percent >= 95) {
+            this.updateStatus('editor', 'success', 'Complete');
+        }
+        
+        // Check for retry/fallback messages
+        const progressStatus = document.getElementById('progressStatus');
+        if (progressStatus) {
+            const statusText = progressStatus.textContent.toLowerCase();
+            if (statusText.includes('retry')) {
+                this.updateStatus('retry', 'active', 'Retrying...');
+            } else if (statusText.includes('fallback')) {
+                this.updateStatus('router', 'active', 'Fallback');
+            } else if (statusText.includes('local')) {
+                this.updateStatus('router', 'active', 'Local Mode');
+            }
+        }
+    }
+};
+
+// Override updateProgress to include tech stack updates
+const originalUpdateProgress = updateProgress;
+updateProgress = function(percent, message, step) {
+    originalUpdateProgress(percent, message, step);
+    TechStackDisplay.simulateProgress(percent);
+};
+
+// Reset tech stack on new generation
+const originalStartGeneration = startGeneration;
+startGeneration = function() {
+    TechStackDisplay.reset();
+    originalStartGeneration();
+};
