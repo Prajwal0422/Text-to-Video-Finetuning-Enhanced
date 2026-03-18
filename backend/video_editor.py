@@ -269,13 +269,6 @@ class VideoEditor:
             print(f"[STAGE 2] Adding fade-out to last clip (0.5s)")
             processed_clips[-1] = FadeOut(processed_clips[-1], 0.5)
         
-        # Apply crossfade between clips
-        if len(processed_clips) > 1:
-            print(f"[STAGE 2] Adding crossfade transitions (0.3s)")
-            for i in range(len(processed_clips) - 1):
-                processed_clips[i] = CrossFadeOut(processed_clips[i], 0.3)
-                processed_clips[i + 1] = CrossFadeIn(processed_clips[i + 1], 0.3)
-        
         print(f"[STAGE 2] ✅ Transitions applied")
         
         # Concatenate
