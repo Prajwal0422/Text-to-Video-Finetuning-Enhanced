@@ -256,29 +256,14 @@ class VideoEditor:
         print(f"[STAGE 1] Expected total duration: {total_duration:.2f}s")
         print(f"[STAGE 1] Target range: {self.target_total_duration[0]}-{self.target_total_duration[1]}s")
         
-        # PHASE 4: Apply cinematic transitions
-        print("\n[STAGE 2] Applying cinematic transitions...")
-        
-        # Apply fade in to first clip
-        if len(processed_clips) > 0:
-            print(f"[STAGE 2] Adding fade-in to first clip (0.5s)")
-            processed_clips[0] = FadeIn(processed_clips[0], 0.5)
-        
-        # Apply fade out to last clip
-        if len(processed_clips) > 0:
-            print(f"[STAGE 2] Adding fade-out to last clip (0.5s)")
-            processed_clips[-1] = FadeOut(processed_clips[-1], 0.5)
-        
-        print(f"[STAGE 2] ✅ Transitions applied")
-        
-        # Concatenate
-        print("\n[STAGE 3] Concatenating clips...")
-        print(f"[STAGE 3] Method: compose")
-        print(f"[STAGE 3] Clips: {len(processed_clips)}")
+        # PHASE 4: Simple concatenation (no effects for stability)
+        print("\n[STAGE 2] Concatenating clips...")
+        print(f"[STAGE 2] Method: compose")
+        print(f"[STAGE 2] Clips: {len(processed_clips)}")
         
         try:
             final_video = concatenate_videoclips(processed_clips, method="compose")
-            print(f"[STAGE 3] Concatenated duration: {final_video.duration:.2f}s")
+            print(f"[STAGE 2] Concatenated duration: {final_video.duration:.2f}s")
             
             if final_video.duration <= 0:
                 raise ValueError(f"Final video has 0 duration")
@@ -286,11 +271,11 @@ class VideoEditor:
             # Check if duration is in target range
             min_dur, max_dur = self.target_total_duration
             if min_dur <= final_video.duration <= max_dur:
-                print(f"[STAGE 3] ✅ Duration in target range")
+                print(f"[STAGE 2] ✅ Duration in target range")
             else:
-                print(f"[STAGE 3] ⚠️  Duration outside target range but acceptable")
+                print(f"[STAGE 2] ⚠️  Duration outside target range but acceptable")
             
-            print(f"[STAGE 3] ✅ SUCCESS")
+            print(f"[STAGE 2] ✅ SUCCESS")
             
         except Exception as e:
             # Close clips on error
@@ -323,7 +308,7 @@ class VideoEditor:
                 logger=None
             )
             
-            print(f"[STAGE 4] ✅ EXPORT COMPLETE")
+            print(f"[STAGE 3] ✅ EXPORT COMPLETE")
             
         except Exception as e:
             # Close clips on error
@@ -337,16 +322,16 @@ class VideoEditor:
         for clip in processed_clips:
             clip.close()
         
-        print(f"[STAGE 4] Clips closed")
+        print(f"[STAGE 3] Clips closed")
         
         # Verify output
-        print("\n[STAGE 5] Verifying output...")
+        print("\n[STAGE 4] Verifying output...")
         
         if not os.path.exists(output_path):
             raise RuntimeError("Output file not created")
         
         output_size = os.path.getsize(output_path)
-        print(f"[STAGE 5] File size: {output_size / 1024:.1f} KB")
+        print(f"[STAGE 4] File size: {output_size / 1024:.1f} KB")
         
         if output_size < 1000:
             raise ValueError(f"Output file too small: {output_size} bytes")
@@ -357,12 +342,12 @@ class VideoEditor:
             final_duration = verify_clip.duration
             verify_clip.close()
             
-            print(f"[STAGE 5] Final duration: {final_duration:.2f}s")
+            print(f"[STAGE 4] Final duration: {final_duration:.2f}s")
             
             if final_duration <= 0:
                 raise ValueError(f"Final duration is {final_duration}")
             
-            print(f"[STAGE 5] ✅ VERIFIED")
+            print(f"[STAGE 4] ✅ VERIFIED")
             
         except Exception as e:
             raise RuntimeError(f"Output verification failed: {e}")
