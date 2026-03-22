@@ -1,180 +1,106 @@
 """
-Cache Management
-Intelligent caching for video operations
+Cache Manager for Video Clips
+Manages downloaded clips and prevents redundant downloads
 """
 
 import os
+import json
 import hashlib
-import pickle
-import numpy as np
-from typing import Any, Optional
-import logging
-
-logger = logging.getLogger(__name__)
-
+from typing import Optional, Dict
+from datetime import datetime, timedelta
 
 class CacheManager:
-    """Manage cache for video operations"""
+    """Manages clip cache with expiration"""
     
-    def __init__(self, cache_dir: str = ".cache/video"):
+    def __init__(self, cache_dir: str = "outputs/clips", cache_duration_days: int = 7):
         self.cache_dir = cache_dir
-        self.enabled = True
-        self._ensure_cache_dir()
-    
-    def _ensure_cache_dir(self):
-        """Create cache directory if it doesn't exist"""
-        os.makedirs(self.cache_dir, exist_ok=True)
-    
-    def _get_cache_key(self, data: Any) -> str:
-        """Generate cache key from data"""
-        try:
-            serialized = pickle.dumps(data)
-            return hashlib.md5(serialized).hexdigest()
-        except:
-            # Fallback to string representation
-            return hashlib.md5(str(data).encode()).hexdigest()
-    
-    def get_cache_path(self, key: str, extension: str = ".npy") -> str:
-        """Get full cache file path"""
-        return os.path.join(self.cache_dir, f"{key}{extension}")
-    
-    def has_cached(self, key: str, extension: str = ".npy") -> bool:
-        """Check if cached data exists"""
-        if not self.enabled:
-            return False
+        self.cache_duration = timedelta(days=cache_duration_days)
+        self.cache_index_file = os.path.join(cache_dir, "cache_index.json")
         
-        cache_path = self.get_cache_path(key, extension)
-        return os.path.exists(cache_path)
+        os.makedirs(cache_dir, exist_ok=True)
+        self.cache_index = self._load_index()
     
-    def load_frame(self, key: str) -> Optional[np.ndarray]:
-        """Load cached frame"""
-        if not self.enabled:
-            return None
-        
-        cache_path = self.get_cache_path(key, ".npy")
-        
-        if os.path.exists(cache_path):
+    def _load_index(self) -> Dict:
+        """Load cache index from disk"""
+        if os.path.exists(self.cache_index_file):
             try:
-                frame = np.load(cache_path)
-                logger.debug(f"Cache hit: {key}")
-                return frame
-            except Exception as e:
-                logger.warning(f"Failed to load cache {key}: {e}")
-                return None
+                with open(self.cache_index_file, 'r') as f:
+                    return json.load(f)
+            except:
+                return {}
+        return {}
+    
+    def _save_index(self):
+        """Save cache index to disk"""
+        with open(self.cache_index_file, 'w') as f:
+            json.dump(self.cache_index, f, indent=2)
+    
+    def get_cache_key(self, query: str) -> str:
+        """Generate cache key from query"""
+        return hashlib.md5(query.lower().encode()).hexdigest()
+    
+    def get_cached_clip(self, query: str) -> Optional[str]:
+        """Get cached clip path if available and not expired"""
+        cache_key = self.get_cache_key(query)
+        
+        if cache_key in self.cache_index:
+            entry = self.cache_index[cache_key]
+            cached_time = datetime.fromisoformat(entry['timestamp'])
+            
+            # Check if expired
+            if datetime.now() - cached_time < self.cache_duration:
+                clip_path = entry['path']
+                if os.path.exists(clip_path):
+                    return clip_path
         
         return None
     
-    def save_frame(self, key: str, frame: np.ndarray):
-        """Save frame to cache"""
-        if not self.enabled:
-            return
+    def cache_clip(self, query: str, clip_path: str):
+        """Add clip to cache"""
+        cache_key = self.get_cache_key(query)
         
-        cache_path = self.get_cache_path(key, ".npy")
+        self.cache_index[cache_key] = {
+            'query': query,
+            'path': clip_path,
+            'timestamp': datetime.now().isoformat()
+        }
         
-        try:
-            np.save(cache_path, frame)
-            logger.debug(f"Cached: {key}")
-        except Exception as e:
-            logger.warning(f"Failed to cache {key}: {e}")
+        self._save_index()
     
-    def load_data(self, key: str) -> Optional[Any]:
-        """Load cached data (pickle)"""
-        if not self.enabled:
-            return None
+    def clean_expired(self):
+        """Remove expired cache entries"""
+        now = datetime.now()
+        expired_keys = []
         
-        cache_path = self.get_cache_path(key, ".pkl")
+        for key, entry in self.cache_index.items():
+            cached_time = datetime.fromisoformat(entry['timestamp'])
+            if now - cached_time >= self.cache_duration:
+                expired_keys.append(key)
+                # Delete file if exists
+                if os.path.exists(entry['path']):
+                    try:
+                        os.remove(entry['path'])
+                    except:
+                        pass
         
-        if os.path.exists(cache_path):
-            try:
-                with open(cache_path, 'rb') as f:
-                    data = pickle.load(f)
-                logger.debug(f"Cache hit: {key}")
-                return data
-            except Exception as e:
-                logger.warning(f"Failed to load cache {key}: {e}")
-                return None
+        for key in expired_keys:
+            del self.cache_index[key]
         
-        return None
+        if expired_keys:
+            self._save_index()
+            print(f"🗑️  Cleaned {len(expired_keys)} expired cache entries")
     
-    def save_data(self, key: str, data: Any):
-        """Save data to cache (pickle)"""
-        if not self.enabled:
-            return
-        
-        cache_path = self.get_cache_path(key, ".pkl")
-        
-        try:
-            with open(cache_path, 'wb') as f:
-                pickle.dump(data, f)
-            logger.debug(f"Cached: {key}")
-        except Exception as e:
-            logger.warning(f"Failed to cache {key}: {e}")
-    
-    def clear_cache(self):
-        """Clear all cached data"""
-        try:
-            for filename in os.listdir(self.cache_dir):
-                file_path = os.path.join(self.cache_dir, filename)
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-            logger.info("Cache cleared")
-        except Exception as e:
-            logger.warning(f"Failed to clear cache: {e}")
-    
-    def get_cache_size(self) -> int:
-        """Get total cache size in bytes"""
+    def get_stats(self) -> Dict:
+        """Get cache statistics"""
+        total_entries = len(self.cache_index)
         total_size = 0
         
-        try:
-            for filename in os.listdir(self.cache_dir):
-                file_path = os.path.join(self.cache_dir, filename)
-                if os.path.isfile(file_path):
-                    total_size += os.path.getsize(file_path)
-        except:
-            pass
+        for entry in self.cache_index.values():
+            if os.path.exists(entry['path']):
+                total_size += os.path.getsize(entry['path'])
         
-        return total_size
-    
-    def get_cache_info(self) -> dict:
-        """Get cache statistics"""
-        try:
-            files = os.listdir(self.cache_dir)
-            size = self.get_cache_size()
-            
-            return {
-                "enabled": self.enabled,
-                "directory": self.cache_dir,
-                "file_count": len(files),
-                "size_bytes": size,
-                "size_mb": size / (1024 * 1024)
-            }
-        except:
-            return {
-                "enabled": self.enabled,
-                "directory": self.cache_dir,
-                "file_count": 0,
-                "size_bytes": 0,
-                "size_mb": 0
-            }
-    
-    def enable(self):
-        """Enable caching"""
-        self.enabled = True
-        logger.info("Cache enabled")
-    
-    def disable(self):
-        """Disable caching"""
-        self.enabled = False
-        logger.info("Cache disabled")
-
-
-# Global cache manager
-_global_cache = None
-
-
-def get_cache_manager() -> CacheManager:
-    """Get global cache manager instance"""
-    global _global_cache
-    if _global_cache is None:
-        _global_cache = CacheManager()
-    return _global_cache
+        return {
+            'total_entries': total_entries,
+            'total_size_mb': round(total_size / (1024 * 1024), 2),
+            'cache_dir': self.cache_dir
+        }
