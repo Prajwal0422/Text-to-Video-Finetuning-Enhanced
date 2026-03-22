@@ -24,7 +24,7 @@ class ClipFetcher:
         self.request_timeout = 8
         self.download_timeout = 30  # Increased for full download
         self.max_workers = 3
-        self.max_file_size = 10 * 1024 * 1024  # 10MB max
+        self.max_file_size = 50 * 1024 * 1024  # 50MB max (increased for HD clips)
         
         self.cache_lock = threading.Lock()
     
@@ -127,7 +127,7 @@ class ClipFetcher:
         return [video for score, video in scored_videos]
     
     def _select_best_video_file(self, video_files: List[Dict]) -> Optional[Dict]:
-        """Select best quality video file (prefer landscape, good resolution)"""
+        """Select best quality video file (prefer landscape, good resolution, smaller size)"""
         if not video_files:
             return None
         
@@ -137,17 +137,16 @@ class ClipFetcher:
         if not landscape_videos:
             landscape_videos = video_files
         
-        # Filter for good duration (> 4 seconds implied by API)
-        # Prefer HD quality (640-1920 width)
-        good_quality = [vf for vf in landscape_videos if 640 <= vf.get('width', 0) <= 1920]
+        # Prefer SD quality (640-854 width) for smaller file sizes
+        sd_quality = [vf for vf in landscape_videos if 640 <= vf.get('width', 0) <= 854]
         
-        if good_quality:
-            # Sort by resolution (prefer higher but not too large)
-            good_quality.sort(key=lambda x: abs(x.get('width', 0) - 1280))  # Prefer 720p
-            return good_quality[0]
+        if sd_quality:
+            # Sort by file size (prefer smaller)
+            sd_quality.sort(key=lambda x: x.get('file_size', 999999999))
+            return sd_quality[0]
         
-        # Fallback: return smallest
-        landscape_videos.sort(key=lambda x: x.get('width', 0) * x.get('height', 0))
+        # Fallback: return smallest file
+        landscape_videos.sort(key=lambda x: x.get('file_size', x.get('width', 0) * x.get('height', 0)))
         return landscape_videos[0]
     
     def download_clip(self, video_url: str, keyword: str) -> Optional[str]:
