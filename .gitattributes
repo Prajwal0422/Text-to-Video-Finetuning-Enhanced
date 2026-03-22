@@ -1,0 +1,43 @@
+# Git attributes for proper line endings and diff handling
+
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Source code
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Binary files
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.webm binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+# Documentation
+*.txt text eol=lf
+LICENSE text eol=lf
+README text eol=lf
+
+# Config files
+.env text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
