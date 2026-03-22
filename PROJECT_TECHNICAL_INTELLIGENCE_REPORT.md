@@ -646,7 +646,7 @@ utils/ (diffusion utilities)
 backend/
 ├── main.py                 # API server (CORE)
 ├── video_generator.py      # Orchestration (CORE)
-├── video_editor.py         # Video processing (CORE)
+├── video_editor.py         # Video processing (CORE)RT
 ├── clip_fetcher.py         # Downloads (CORE)
 ├── script_generator.py     # NLP (CORE)
 ├── requirements.txt        # Dependencies (CORE)
