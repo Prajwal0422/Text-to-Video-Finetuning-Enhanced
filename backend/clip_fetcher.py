@@ -13,7 +13,8 @@ import threading
 
 class ClipFetcher:
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv('PEXELS_API_KEY', '')
+        # Load API key with fallback to default
+        self.api_key = api_key or os.getenv('PEXELS_API_KEY', '2YmxczgDDvKxVncxrEtrnv82ksotaLFirswQk0Xyhng0cgy6GBXbRPmq')
         self.base_url = "https://api.pexels.com/videos/search"
         self.headers = {'Authorization': self.api_key}
         self.download_dir = "outputs/clips"
