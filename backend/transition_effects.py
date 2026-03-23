@@ -1,233 +1,149 @@
 """
 Transition Effects
-Professional transitions between video clips
+Adds smooth transitions between video clips
 """
 
-import cv2
+from typing import List, Optional
+from moviepy import VideoFileClip, CompositeVideoClip
+from moviepy.video.fx import fadein, fadeout, crossfadein, crossfadeout
 import numpy as np
 
-try:
-    from .advanced_video_algorithms import EasingFunctions
-except ImportError:
-    from advanced_video_algorithms import EasingFunctions
-
-
 class TransitionEffects:
-    """Professional video transition effects"""
+    """Manages video transitions"""
     
-    @staticmethod
-    def crossfade(frame1: np.ndarray, frame2: np.ndarray,
-                 progress: float, easing: str = "cubic") -> np.ndarray:
-        """
-        Smooth crossfade transition
-        
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            progress: Transition progress (0-1)
-            easing: Easing function name
-            
-        Returns:
-            Blended frame
-        """
-        # Apply easing
-        if easing == "cubic":
-            alpha = EasingFunctions.ease_in_out_cubic(progress)
-        elif easing == "sine":
-            alpha = EasingFunctions.ease_in_out_sine(progress)
-        else:
-            alpha = progress
-        
-        return cv2.addWeighted(frame1, 1 - alpha, frame2, alpha, 0)
+    TRANSITIONS = {
+        'fade': 'Simple fade transition',
+        'crossfade': 'Crossfade between clips',
+        'slide': 'Slide transition',
+        'zoom': 'Zoom transition',
+        'wipe': 'Wipe transition'
+    }
     
-    @staticmethod
-    def slide(frame1: np.ndarray, frame2: np.ndarray,
-             progress: float, direction: str = "left") -> np.ndarray:
-        """
-        Slide transition
-        
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            progress: Transition progress (0-1)
-            direction: Slide direction ('left', 'right', 'up', 'down')
-            
-        Returns:
-            Transitioned frame
-        """
-        h, w = frame1.shape[:2]
-        eased = EasingFunctions.ease_in_out_quint(progress)
-        
-        result = np.zeros_like(frame1)
-        
-        if direction == "left":
-            offset = int(w * eased)
-            if offset < w:
-                result[:, :w-offset] = frame1[:, offset:]
-            if offset > 0:
-                result[:, w-offset:] = frame2[:, :offset]
-        
-        elif direction == "right":
-            offset = int(w * eased)
-            if offset < w:
-                result[:, offset:] = frame1[:, :w-offset]
-            if offset > 0:
-                result[:, :offset] = frame2[:, w-offset:]
-        
-        elif direction == "up":
-            offset = int(h * eased)
-            if offset < h:
-                result[:h-offset, :] = frame1[offset:, :]
-            if offset > 0:
-                result[h-offset:, :] = frame2[:offset, :]
-        
-        elif direction == "down":
-            offset = int(h * eased)
-            if offset < h:
-                result[offset:, :] = frame1[:h-offset, :]
-            if offset > 0:
-                result[:offset, :] = frame2[h-offset:, :]
-        
-        return result
+    def __init__(self, transition_duration: float = 0.5):
+        self.transition_duration = transition_duration
     
-    @staticmethod
-    def wipe(frame1: np.ndarray, frame2: np.ndarray,
-            progress: float, direction: str = "horizontal") -> np.ndarray:
-        """
-        Wipe transition
+    def apply_fade(
+        self,
+        clip: VideoFileClip,
+        fade_in: bool = True,
+        fade_out: bool = True
+    ) -> VideoFileClip:
+        """Apply fade in/out to clip"""
+        if fade_in:
+            clip = fadein(clip, self.transition_duration)
         
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            progress: Transition progress (0-1)
-            direction: Wipe direction ('horizontal', 'vertical')
-            
-        Returns:
-            Transitioned frame
-        """
-        h, w = frame1.shape[:2]
-        eased = EasingFunctions.ease_in_out_cubic(progress)
+        if fade_out:
+            clip = fadeout(clip, self.transition_duration)
         
-        result = frame1.copy()
-        
-        if direction == "horizontal":
-            split = int(w * eased)
-            result[:, split:] = frame2[:, split:]
-        else:  # vertical
-            split = int(h * eased)
-            result[split:, :] = frame2[split:, :]
-        
-        return result
+        return clip
     
-    @staticmethod
-    def zoom_transition(frame1: np.ndarray, frame2: np.ndarray,
-                       progress: float) -> np.ndarray:
-        """
-        Zoom transition (zoom out from frame1, zoom in to frame2)
+    def apply_crossfade(
+        self,
+        clip1: VideoFileClip,
+        clip2: VideoFileClip
+    ) -> VideoFileClip:
+        """Apply crossfade between two clips"""
+        # Add fadeout to first clip
+        clip1 = fadeout(clip1, self.transition_duration)
         
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            progress: Transition progress (0-1)
-            
-        Returns:
-            Transitioned frame
-        """
-        h, w = frame1.shape[:2]
+        # Add fadein to second clip
+        clip2 = fadein(clip2, self.transition_duration)
         
-        if progress < 0.5:
-            # Zoom out from frame1
-            t = progress * 2
-            scale = 1.0 + t * 0.5
-            alpha = 1.0 - t
-            current_frame = frame1
-        else:
-            # Zoom in to frame2
-            t = (progress - 0.5) * 2
-            scale = 1.5 - t * 0.5
-            alpha = t
-            current_frame = frame2
+        # Overlap clips
+        clip2 = clip2.set_start(clip1.duration - self.transition_duration)
         
-        # Apply zoom
-        new_h, new_w = int(h * scale), int(w * scale)
-        zoomed = cv2.resize(current_frame, (new_w, new_h))
-        
-        # Center crop
-        y = (new_h - h) // 2
-        x = (new_w - w) // 2
-        cropped = zoomed[y:y+h, x:x+w]
-        
-        # Fade
-        if progress < 0.5:
-            result = (cropped * alpha).astype(np.uint8)
-        else:
-            black = np.zeros_like(frame2)
-            result = cv2.addWeighted(black, 1 - alpha, cropped, alpha, 0)
-        
-        return result
+        return CompositeVideoClip([clip1, clip2])
     
-    @staticmethod
-    def blur_transition(frame1: np.ndarray, frame2: np.ndarray,
-                       progress: float) -> np.ndarray:
-        """
-        Blur transition (blur out and blur in)
+    def apply_slide(
+        self,
+        clip: VideoFileClip,
+        direction: str = 'left'
+    ) -> VideoFileClip:
+        """Apply slide transition"""
+        w, h = clip.size
         
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            progress: Transition progress (0-1)
-            
-        Returns:
-            Transitioned frame
-        """
-        if progress < 0.5:
-            # Blur out frame1
-            t = progress * 2
-            blur_amount = int(t * 20) * 2 + 1
-            blurred = cv2.GaussianBlur(frame1, (blur_amount, blur_amount), 0)
-            return cv2.addWeighted(frame1, 1 - t, blurred, t, 0)
-        else:
-            # Blur in frame2
-            t = (progress - 0.5) * 2
-            blur_amount = int((1 - t) * 20) * 2 + 1
-            blurred = cv2.GaussianBlur(frame2, (blur_amount, blur_amount), 0)
-            return cv2.addWeighted(blurred, 1 - t, frame2, t, 0)
+        def position(t):
+            if direction == 'left':
+                return (w * (1 - t / self.transition_duration), 0)
+            elif direction == 'right':
+                return (-w * (1 - t / self.transition_duration), 0)
+            elif direction == 'up':
+                return (0, h * (1 - t / self.transition_duration))
+            else:  # down
+                return (0, -h * (1 - t / self.transition_duration))
+        
+        return clip.set_position(position)
     
-    @staticmethod
-    def create_transition_sequence(frame1: np.ndarray, frame2: np.ndarray,
-                                  transition_type: str, num_frames: int = 30) -> list:
-        """
-        Create a sequence of transition frames
-        
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            transition_type: Type of transition
-            num_frames: Number of transition frames
+    def apply_zoom(
+        self,
+        clip: VideoFileClip,
+        zoom_in: bool = True
+    ) -> VideoFileClip:
+        """Apply zoom transition"""
+        def zoom_effect(get_frame, t):
+            frame = get_frame(t)
             
-        Returns:
-            List of transition frames
-        """
-        frames = []
-        
-        for i in range(num_frames):
-            progress = i / (num_frames - 1)
-            
-            if transition_type == "crossfade":
-                frame = TransitionEffects.crossfade(frame1, frame2, progress)
-            elif transition_type == "slide_left":
-                frame = TransitionEffects.slide(frame1, frame2, progress, "left")
-            elif transition_type == "slide_right":
-                frame = TransitionEffects.slide(frame1, frame2, progress, "right")
-            elif transition_type == "wipe":
-                frame = TransitionEffects.wipe(frame1, frame2, progress)
-            elif transition_type == "zoom":
-                frame = TransitionEffects.zoom_transition(frame1, frame2, progress)
-            elif transition_type == "blur":
-                frame = TransitionEffects.blur_transition(frame1, frame2, progress)
+            if zoom_in:
+                scale = 1 + (t / clip.duration) * 0.2
             else:
-                frame = TransitionEffects.crossfade(frame1, frame2, progress)
+                scale = 1.2 - (t / clip.duration) * 0.2
             
-            frames.append(frame)
+            h, w = frame.shape[:2]
+            new_h, new_w = int(h * scale), int(w * scale)
+            
+            # Resize frame
+            import cv2
+            resized = cv2.resize(frame, (new_w, new_h))
+            
+            # Crop to original size
+            start_h = (new_h - h) // 2
+            start_w = (new_w - w) // 2
+            cropped = resized[start_h:start_h+h, start_w:start_w+w]
+            
+            return cropped
         
-        return frames
+        return clip.fl(zoom_effect)
+    
+    def create_transition_sequence(
+        self,
+        clips: List[VideoFileClip],
+        transition_type: str = 'crossfade'
+    ) -> VideoFileClip:
+        """Create sequence with transitions"""
+        if not clips:
+            raise ValueError("No clips provided")
+        
+        if len(clips) == 1:
+            return clips[0]
+        
+        result = clips[0]
+        
+        for clip in clips[1:]:
+            if transition_type == 'crossfade':
+                result = self.apply_crossfade(result, clip)
+            elif transition_type == 'fade':
+                result = fadeout(result, self.transition_duration)
+                clip = fadein(clip, self.transition_duration)
+                clip = clip.set_start(result.duration)
+                result = CompositeVideoClip([result, clip])
+            else:
+                # No transition, just concatenate
+                clip = clip.set_start(result.duration)
+                result = CompositeVideoClip([result, clip])
+        
+        return result
+    
+    def get_available_transitions(self) -> List[Dict]:
+        """Get list of available transitions"""
+        return [
+            {'name': name, 'description': desc}
+            for name, desc in self.TRANSITIONS.items()
+        ]
+
+
+if __name__ == "__main__":
+    effects = TransitionEffects()
+    
+    print("Available Transitions:")
+    for transition in effects.get_available_transitions():
+        print(f"  - {transition['name']}: {transition['description']}")
