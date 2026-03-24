@@ -1,183 +1,194 @@
 """
-Color Grading Engine
-Professional color correction and grading
+Color Grading System
+Professional color grading and LUT application
 """
 
 import cv2
 import numpy as np
-
+from typing import Optional, Tuple
+import os
 
 class ColorGrading:
     """Professional color grading tools"""
     
-    @staticmethod
-    def apply_lut(frame: np.ndarray, lut_type: str = "cinematic") -> np.ndarray:
-        """
-        Apply color lookup table
-        
-        Args:
-            frame: Input frame
-            lut_type: LUT type ('cinematic', 'warm', 'cool', 'vintage')
-            
-        Returns:
-            Graded frame
-        """
-        frame_float = frame.astype(np.float32)
-        
-        if lut_type == "cinematic":
-            # Teal and orange Hollywood look
-            frame_float[:, :, 0] = np.clip(frame_float[:, :, 0] * 1.1, 0, 255)  # Blue
-            frame_float[:, :, 1] = np.clip(frame_float[:, :, 1] * 0.95, 0, 255)  # Green
-            frame_float[:, :, 2] = np.clip(frame_float[:, :, 2] * 1.05, 0, 255)  # Red
-        
-        elif lut_type == "warm":
-            # Warm sunset look
-            frame_float[:, :, 0] = np.clip(frame_float[:, :, 0] * 0.9, 0, 255)  # Less blue
-            frame_float[:, :, 1] = np.clip(frame_float[:, :, 1] * 1.05, 0, 255)  # More green
-            frame_float[:, :, 2] = np.clip(frame_float[:, :, 2] * 1.15, 0, 255)  # More red
-        
-        elif lut_type == "cool":
-            # Cool blue look
-            frame_float[:, :, 0] = np.clip(frame_float[:, :, 0] * 1.15, 0, 255)  # More blue
-            frame_float[:, :, 1] = np.clip(frame_float[:, :, 1] * 1.05, 0, 255)  # Slight green
-            frame_float[:, :, 2] = np.clip(frame_float[:, :, 2] * 0.95, 0, 255)  # Less red
-        
-        elif lut_type == "vintage":
-            # Vintage film look
-            frame_float[:, :, 0] = np.clip(frame_float[:, :, 0] * 0.95, 0, 255)
-            frame_float[:, :, 1] = np.clip(frame_float[:, :, 1] * 1.1, 0, 255)
-            frame_float[:, :, 2] = np.clip(frame_float[:, :, 2] * 1.05, 0, 255)
-        
-        return frame_float.astype(np.uint8)
+    # Predefined color grades
+    PRESETS = {
+        'cinematic': {
+            'shadows': (-10, -5, 5),
+            'midtones': (0, 0, 0),
+            'highlights': (10, 5, -5),
+            'saturation': 1.1
+        },
+        'warm': {
+            'shadows': (5, 0, -10),
+            'midtones': (10, 5, -5),
+            'highlights': (15, 10, 0),
+            'saturation': 1.2
+        },
+        'cool': {
+            'shadows': (-10, -5, 10),
+            'midtones': (-5, 0, 10),
+            'highlights': (0, 5, 15),
+            'saturation': 1.1
+        },
+        'vintage': {
+            'shadows': (10, 5, 0),
+            'midtones': (15, 10, 5),
+            'highlights': (20, 15, 10),
+            'saturation': 0.8
+        },
+        'dramatic': {
+            'shadows': (-20, -10, 0),
+            'midtones': (0, 0, 0),
+            'highlights': (20, 10, 0),
+            'saturation': 1.3
+        }
+    }
     
-    @staticmethod
-    def enhance_contrast(frame: np.ndarray, strength: float = 1.2) -> np.ndarray:
-        """
-        Enhance contrast using S-curve
-        
-        Args:
-            frame: Input frame
-            strength: Contrast strength (1.0 = no change)
-            
-        Returns:
-            Contrast-enhanced frame
-        """
-        # Convert to LAB color space
-        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
-        l, a, b = cv2.split(lab)
-        
-        # Apply S-curve to L channel
-        l_float = l.astype(np.float32) / 255.0
-        l_curved = np.power(l_float, strength)
-        l_curved = (l_curved * 255).astype(np.uint8)
-        
-        # Merge back
-        lab = cv2.merge([l_curved, a, b])
-        return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+    def __init__(self):
+        self.lut_dir = "luts"
+        os.makedirs(self.lut_dir, exist_ok=True)
     
-    @staticmethod
-    def adjust_saturation(frame: np.ndarray, factor: float = 1.2) -> np.ndarray:
-        """
-        Adjust color saturation
+    def apply_color_grade(
+        self,
+        frame: np.ndarray,
+        preset: str = 'cinematic'
+    ) -> np.ndarray:
+        """Apply color grade preset"""
+        if preset not in self.PRESETS:
+            raise ValueError(f"Unknown preset: {preset}")
         
-        Args:
-            frame: Input frame
-            factor: Saturation factor (1.0 = no change, >1 = more saturated)
-            
-        Returns:
-            Saturation-adjusted frame
-        """
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV).astype(np.float32)
-        hsv[:, :, 1] = np.clip(hsv[:, :, 1] * factor, 0, 255)
-        return cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
+        grade = self.PRESETS[preset]
+        
+        # Convert to float for processing
+        img = frame.astype(np.float32) / 255.0
+        
+        # Split into RGB channels
+        b, g, r = cv2.split(img)
+        
+        # Apply shadow adjustments (dark areas)
+        shadow_mask = self._create_luminance_mask(img, 0, 0.3)
+        b += shadow_mask * grade['shadows'][0] / 255.0
+        g += shadow_mask * grade['shadows'][1] / 255.0
+        r += shadow_mask * grade['shadows'][2] / 255.0
+        
+        # Apply midtone adjustments
+        midtone_mask = self._create_luminance_mask(img, 0.3, 0.7)
+        b += midtone_mask * grade['midtones'][0] / 255.0
+        g += midtone_mask * grade['midtones'][1] / 255.0
+        r += midtone_mask * grade['midtones'][2] / 255.0
+        
+        # Apply highlight adjustments (bright areas)
+        highlight_mask = self._create_luminance_mask(img, 0.7, 1.0)
+        b += highlight_mask * grade['highlights'][0] / 255.0
+        g += highlight_mask * grade['highlights'][1] / 255.0
+        r += highlight_mask * grade['highlights'][2] / 255.0
+        
+        # Merge channels
+        img = cv2.merge([b, g, r])
+        
+        # Adjust saturation
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        hsv[:, :, 1] *= grade['saturation']
+        img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        
+        # Clip and convert back
+        img = np.clip(img, 0, 1)
+        return (img * 255).astype(np.uint8)
     
-    @staticmethod
-    def color_temperature(frame: np.ndarray, temperature: int) -> np.ndarray:
+    def _create_luminance_mask(
+        self,
+        img: np.ndarray,
+        min_val: float,
+        max_val: float
+    ) -> np.ndarray:
+        """Create luminance-based mask"""
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        mask = np.zeros_like(gray)
+        mask[(gray >= min_val) & (gray <= max_val)] = 1.0
+        
+        # Smooth mask
+        mask = cv2.GaussianBlur(mask, (21, 21), 0)
+        
+        return mask
+    
+    def adjust_temperature(
+        self,
+        frame: np.ndarray,
+        temperature: int = 0
+    ) -> np.ndarray:
         """
         Adjust color temperature
-        
-        Args:
-            frame: Input frame
-            temperature: Temperature shift (-100 to 100, negative=cooler, positive=warmer)
-            
-        Returns:
-            Temperature-adjusted frame
+        Negative = cooler (blue), Positive = warmer (orange)
         """
-        frame_float = frame.astype(np.float32)
+        img = frame.astype(np.float32)
         
-        if temperature > 0:  # Warmer
-            factor = temperature / 100.0
-            frame_float[:, :, 2] *= (1 + factor * 0.3)  # More red
-            frame_float[:, :, 0] *= (1 - factor * 0.2)  # Less blue
-        else:  # Cooler
-            factor = -temperature / 100.0
-            frame_float[:, :, 0] *= (1 + factor * 0.3)  # More blue
-            frame_float[:, :, 2] *= (1 - factor * 0.2)  # Less red
+        if temperature > 0:
+            # Warmer
+            img[:, :, 2] += temperature  # More red
+            img[:, :, 0] -= temperature * 0.5  # Less blue
+        else:
+            # Cooler
+            img[:, :, 0] -= temperature  # More blue
+            img[:, :, 2] += temperature * 0.5  # Less red
         
-        return np.clip(frame_float, 0, 255).astype(np.uint8)
+        return np.clip(img, 0, 255).astype(np.uint8)
     
-    @staticmethod
-    def vignette(frame: np.ndarray, intensity: float = 0.5) -> np.ndarray:
+    def adjust_tint(
+        self,
+        frame: np.ndarray,
+        tint: int = 0
+    ) -> np.ndarray:
         """
-        Add vignette effect
-        
-        Args:
-            frame: Input frame
-            intensity: Vignette intensity (0-1)
-            
-        Returns:
-            Frame with vignette
+        Adjust green/magenta tint
+        Negative = magenta, Positive = green
         """
-        h, w = frame.shape[:2]
+        img = frame.astype(np.float32)
         
-        # Create radial gradient
-        y, x = np.ogrid[:h, :w]
-        center_y, center_x = h // 2, w // 2
+        if tint > 0:
+            # More green
+            img[:, :, 1] += tint
+        else:
+            # More magenta (less green, more red+blue)
+            img[:, :, 1] += tint
+            img[:, :, 0] -= tint * 0.5
+            img[:, :, 2] -= tint * 0.5
         
-        # Calculate distance from center
-        dist = np.sqrt((x - center_x)**2 + (y - center_y)**2)
-        max_dist = np.sqrt(center_x**2 + center_y**2)
-        
-        # Create vignette mask
-        vignette_mask = 1 - (dist / max_dist) * intensity
-        vignette_mask = np.clip(vignette_mask, 0, 1)
-        
-        # Apply to each channel
-        result = frame.astype(np.float32)
-        for i in range(3):
-            result[:, :, i] *= vignette_mask
-        
-        return result.astype(np.uint8)
+        return np.clip(img, 0, 255).astype(np.uint8)
     
-    @staticmethod
-    def teal_orange_grade(frame: np.ndarray, strength: float = 0.5) -> np.ndarray:
-        """
-        Apply Hollywood teal and orange color grade
-        
-        Args:
-            frame: Input frame
-            strength: Effect strength (0-1)
-            
-        Returns:
-            Graded frame
-        """
-        # Convert to LAB
-        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
-        l, a, b = cv2.split(lab)
-        
-        # Push colors toward teal/orange
-        a_float = a.astype(np.float32)
-        b_float = b.astype(np.float32)
-        
-        # Shift a channel (green-red axis)
-        a_float = a_float + (128 - a_float) * strength * 0.3
-        
-        # Shift b channel (blue-yellow axis)
-        b_float = b_float + (b_float - 128) * strength * 0.5
-        
-        a_adjusted = np.clip(a_float, 0, 255).astype(np.uint8)
-        b_adjusted = np.clip(b_float, 0, 255).astype(np.uint8)
-        
-        # Merge back
-        lab = cv2.merge([l, a_adjusted, b_adjusted])
-        return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+    def apply_lut(
+        self,
+        frame: np.ndarray,
+        lut_path: str
+    ) -> np.ndarray:
+        """Apply 3D LUT (Look-Up Table)"""
+        # Placeholder for LUT application
+        # Would require actual LUT file parsing
+        return frame
+    
+    def create_custom_grade(
+        self,
+        shadows: Tuple[int, int, int] = (0, 0, 0),
+        midtones: Tuple[int, int, int] = (0, 0, 0),
+        highlights: Tuple[int, int, int] = (0, 0, 0),
+        saturation: float = 1.0
+    ) -> dict:
+        """Create custom color grade"""
+        return {
+            'shadows': shadows,
+            'midtones': midtones,
+            'highlights': highlights,
+            'saturation': saturation
+        }
+    
+    def get_available_presets(self) -> list:
+        """Get list of available presets"""
+        return list(self.PRESETS.keys())
+
+
+if __name__ == "__main__":
+    grading = ColorGrading()
+    
+    print("Available Color Grades:")
+    for preset in grading.get_available_presets():
+        print(f"  - {preset}")
