@@ -21,10 +21,10 @@ class ClipFetcher:
         self.cache_dir = os.path.join(self.download_dir, "cache")
         os.makedirs(self.cache_dir, exist_ok=True)
         
-        # Performance settings
-        self.request_timeout = 8
-        self.download_timeout = 30  # Increased for full download
-        self.max_workers = 3
+        # Performance settings - OPTIMIZED FOR SPEED
+        self.request_timeout = 5  # Reduced from 8
+        self.download_timeout = 20  # Reduced from 30
+        self.max_workers = 5  # Increased from 3 for faster parallel downloads
         self.max_file_size = 50 * 1024 * 1024  # 50MB max (increased for HD clips)
         
         self.cache_lock = threading.Lock()

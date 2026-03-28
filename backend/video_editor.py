@@ -22,13 +22,13 @@ class VideoEditor:
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(self.normalized_dir, exist_ok=True)
         
-        # Settings
-        self.clip_duration = 4.0  # PHASE 3: 4 seconds minimum per scene
+        # Settings - OPTIMIZED FOR SPEED
+        self.clip_duration = 3.0  # Reduced from 4.0 for faster processing
         self.target_width = 640
         self.target_height = 360
         self.fps = 24
         self.min_clip_duration = 1.0
-        self.target_total_duration = (12, 16)  # PHASE 3: 12-16 seconds total
+        self.target_total_duration = (9, 12)  # Reduced from (12, 16) for faster generation
         
         # Get FFmpeg path
         try:
