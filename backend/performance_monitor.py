@@ -1,126 +1,200 @@
 """
-Performance Monitoring
-Track and analyze video generation performance
+Performance Monitoring System
+Real-time tracking of video generation metrics
 """
 
 import time
-import psutil
-import logging
-from typing import Dict, List
-from collections import defaultdict
-
-logger = logging.getLogger(__name__)
-
+import json
+from typing import Dict, List, Optional
+from datetime import datetime
+from collections import deque
+import threading
 
 class PerformanceMonitor:
-    """Monitor and track performance metrics"""
-    
-    def __init__(self):
-        self.timers = {}
-        self.metrics = defaultdict(list)
-        self.start_times = {}
-    
-    def start_timer(self, operation: str):
-        """Start timing an operation"""
-        self.start_times[operation] = time.time()
-    
-    def end_timer(self, operation: str) -> float:
-        """End timing and return duration"""
-        if operation in self.start_times:
-            duration = time.time() - self.start_times[operation]
-            self.metrics[operation].append(duration)
-            del self.start_times[operation]
-            return duration
-        return 0.0
-    
-    def record_metric(self, name: str, value: float):
-        """Record a custom metric"""
-        self.metrics[name].append(value)
-    
-    def get_average(self, operation: str) -> float:
-        """Get average time for an operation"""
-        if operation in self.metrics and len(self.metrics[operation]) > 0:
-            return sum(self.metrics[operation]) / len(self.metrics[operation])
-        return 0.0
-    
-    def get_total(self, operation: str) -> float:
-        """Get total time for an operation"""
-        if operation in self.metrics:
-            return sum(self.metrics[operation])
-        return 0.0
-    
-    def get_report(self) -> Dict:
-        """Generate performance report"""
-        report = {}
+    def __init__(self, max_history: int = 100):
+        self.max_history = max_history
+        self.history = deque(maxlen=max_history)
+        self.current_session = {}
+        self.lock = threading.Lock()
         
-        for operation, times in self.metrics.items():
-            if len(times) > 0:
-                report[operation] = {
-                    "count": len(times),
-                    "total": sum(times),
-                    "average": sum(times) / len(times),
-                    "min": min(times),
-                    "max": max(times)
+        # Metrics
+        self.total_generations = 0
+        self.successful_generations = 0
+        self.failed_generations = 0
+        self.total_time = 0.0
+        
+    def start_generation(self, prompt: str, mode: str = "standard") -> str:
+        """Start tracking a new generation"""
+        session_id = f"{int(time.time() * 1000)}"
+        
+        with self.lock:
+            self.current_session[session_id] = {
+                'prompt': prompt,
+                'mode': mode,
+                'start_time': time.time(),
+                'status': 'in_progress'
+            }
+        
+        return session_id
+    
+    def end_generation(self, session_id: str, success: bool = True, 
+                      output_path: Optional[str] = None, error: Optional[str] = None):
+        """End tracking and record metrics"""
+        with self.lock:
+            if session_id not in self.current_session:
+                return
+            
+            session = self.current_session[session_id]
+            end_time = time.time()
+            duration = end_time - session['start_time']
+            
+            # Update metrics
+            self.total_generations += 1
+            self.total_time += duration
+            
+            if success:
+                self.successful_generations += 1
+            else:
+                self.failed_generations += 1
+            
+            # Record in history
+            record = {
+                'session_id': session_id,
+                'prompt': session['prompt'],
+                'mode': session['mode'],
+                'duration': round(duration, 2),
+                'success': success,
+                'output_path': output_path,
+                'error': error,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            self.history.append(record)
+            
+            # Remove from current sessions
+            del self.current_session[session_id]
+    
+    def get_stats(self) -> Dict:
+        """Get current performance statistics"""
+        with self.lock:
+            if self.total_generations == 0:
+                return {
+                    'total_generations': 0,
+                    'success_rate': 0.0,
+                    'avg_duration': 0.0,
+                    'total_time': 0.0
                 }
+            
+            success_rate = (self.successful_generations / self.total_generations) * 100
+            avg_duration = self.total_time / self.total_generations
+            
+            # Calculate mode-specific stats
+            mode_stats = {}
+            for record in self.history:
+                mode = record['mode']
+                if mode not in mode_stats:
+                    mode_stats[mode] = {'count': 0, 'total_time': 0.0, 'successes': 0}
+                
+                mode_stats[mode]['count'] += 1
+                mode_stats[mode]['total_time'] += record['duration']
+                if record['success']:
+                    mode_stats[mode]['successes'] += 1
+            
+            # Calculate averages per mode
+            for mode, stats in mode_stats.items():
+                stats['avg_duration'] = round(stats['total_time'] / stats['count'], 2)
+                stats['success_rate'] = round((stats['successes'] / stats['count']) * 100, 1)
+            
+            return {
+                'total_generations': self.total_generations,
+                'successful': self.successful_generations,
+                'failed': self.failed_generations,
+                'success_rate': round(success_rate, 1),
+                'avg_duration': round(avg_duration, 2),
+                'total_time': round(self.total_time, 2),
+                'mode_stats': mode_stats,
+                'active_sessions': len(self.current_session)
+            }
+    
+    def get_recent_history(self, limit: int = 10) -> List[Dict]:
+        """Get recent generation history"""
+        with self.lock:
+            return list(self.history)[-limit:]
+    
+    def get_performance_report(self) -> str:
+        """Generate a formatted performance report"""
+        stats = self.get_stats()
         
-        return report
-    
-    def print_report(self):
-        """Print formatted performance report"""
-        report = self.get_report()
+        report = []
+        report.append("=" * 60)
+        report.append("PERFORMANCE REPORT")
+        report.append("=" * 60)
+        report.append(f"Total Generations: {stats['total_generations']}")
+        report.append(f"Successful: {stats['successful']}")
+        report.append(f"Failed: {stats['failed']}")
+        report.append(f"Success Rate: {stats['success_rate']}%")
+        report.append(f"Average Duration: {stats['avg_duration']}s")
+        report.append(f"Total Time: {stats['total_time']}s")
+        report.append("")
         
-        logger.info("=" * 60)
-        logger.info("PERFORMANCE REPORT")
-        logger.info("=" * 60)
+        if stats['mode_stats']:
+            report.append("Mode-Specific Stats:")
+            report.append("-" * 60)
+            for mode, mode_stat in stats['mode_stats'].items():
+                report.append(f"{mode.upper()}:")
+                report.append(f"  Count: {mode_stat['count']}")
+                report.append(f"  Avg Duration: {mode_stat['avg_duration']}s")
+                report.append(f"  Success Rate: {mode_stat['success_rate']}%")
+                report.append("")
         
-        for operation, stats in report.items():
-            logger.info(f"\n{operation}:")
-            logger.info(f"  Count: {stats['count']}")
-            logger.info(f"  Total: {stats['total']:.3f}s")
-            logger.info(f"  Average: {stats['average']:.3f}s")
-            logger.info(f"  Min: {stats['min']:.3f}s")
-            logger.info(f"  Max: {stats['max']:.3f}s")
+        report.append("=" * 60)
         
-        logger.info("=" * 60)
+        return "\n".join(report)
     
-    def get_system_metrics(self) -> Dict:
-        """Get current system resource usage"""
-        return {
-            "cpu_percent": psutil.cpu_percent(interval=0.1),
-            "memory_percent": psutil.virtual_memory().percent,
-            "memory_available_mb": psutil.virtual_memory().available / (1024 * 1024)
-        }
+    def export_metrics(self, filepath: str):
+        """Export metrics to JSON file"""
+        with self.lock:
+            data = {
+                'stats': self.get_stats(),
+                'history': list(self.history),
+                'exported_at': datetime.now().isoformat()
+            }
+            
+            with open(filepath, 'w') as f:
+                json.dump(data, f, indent=2)
     
-    def reset(self):
-        """Reset all metrics"""
-        self.timers.clear()
-        self.metrics.clear()
-        self.start_times.clear()
+    def clear_history(self):
+        """Clear all history (keeps current stats)"""
+        with self.lock:
+            self.history.clear()
 
 
-class PerformanceProfiler:
-    """Context manager for easy performance profiling"""
+# Global instance
+monitor = PerformanceMonitor()
+
+
+if __name__ == "__main__":
+    # Test
+    print("Performance Monitor Test")
+    print("=" * 60)
     
-    def __init__(self, monitor: PerformanceMonitor, operation: str):
-        self.monitor = monitor
-        self.operation = operation
+    # Simulate generations
+    session1 = monitor.start_generation("ocean waves", "fast")
+    time.sleep(0.5)
+    monitor.end_generation(session1, success=True, output_path="video1.mp4")
     
-    def __enter__(self):
-        self.monitor.start_timer(self.operation)
-        return self
+    session2 = monitor.start_generation("mountain sunset", "standard")
+    time.sleep(0.8)
+    monitor.end_generation(session2, success=True, output_path="video2.mp4")
     
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        duration = self.monitor.end_timer(self.operation)
-        logger.debug(f"{self.operation}: {duration:.3f}s")
-
-
-# Global performance monitor
-_global_monitor = None
-
-
-def get_performance_monitor() -> PerformanceMonitor:
-    """Get global performance monitor instance"""
-    global _global_monitor
-    if _global_monitor is None:
-        _global_monitor = PerformanceMonitor()
-    return _global_monitor
+    session3 = monitor.start_generation("city lights", "ultra_fast")
+    time.sleep(0.3)
+    monitor.end_generation(session3, success=False, error="API timeout")
+    
+    # Print report
+    print(monitor.get_performance_report())
+    
+    # Recent history
+    print("\nRecent History:")
+    for record in monitor.get_recent_history(3):
+        print(f"  {record['prompt'][:20]:20} | {record['mode']:12} | {record['duration']}s | {'✅' if record['success'] else '❌'}")

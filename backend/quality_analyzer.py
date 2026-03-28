@@ -1,198 +1,235 @@
 """
-Quality Analysis
-Analyze video quality and complexity
+Video Quality Analyzer
+Analyzes generated videos for quality metrics
 """
 
-import cv2
+import os
+from typing import Dict, Optional
+from moviepy import VideoFileClip
 import numpy as np
-from typing import Dict, List
-
 
 class QualityAnalyzer:
-    """Analyze video quality metrics"""
-    
-    @staticmethod
-    def analyze_frame_complexity(frame: np.ndarray) -> float:
-        """
-        Analyze frame complexity (0-1)
-        
-        Args:
-            frame: Input frame
-            
-        Returns:
-            Complexity score (0=simple, 1=complex)
-        """
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
-        # Calculate edge density
-        edges = cv2.Canny(gray, 50, 150)
-        edge_density = np.sum(edges > 0) / edges.size
-        
-        # Calculate texture complexity using Laplacian variance
-        laplacian = cv2.Laplacian(gray, cv2.CV_64F)
-        texture_variance = np.var(laplacian)
-        texture_score = min(texture_variance / 1000, 1.0)
-        
-        # Combine metrics
-        complexity = (edge_density * 0.6 + texture_score * 0.4)
-        
-        return min(complexity, 1.0)
-    
-    @staticmethod
-    def analyze_motion_intensity(frame1: np.ndarray, frame2: np.ndarray) -> float:
-        """
-        Analyze motion intensity between two frames
-        
-        Args:
-            frame1: First frame
-            frame2: Second frame
-            
-        Returns:
-            Motion intensity (0-1)
-        """
-        gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
-        gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-        
-        # Calculate frame difference
-        diff = np.abs(gray1.astype(float) - gray2.astype(float))
-        motion_score = np.mean(diff) / 255.0
-        
-        return min(motion_score, 1.0)
-    
-    @staticmethod
-    def analyze_sharpness(frame: np.ndarray) -> float:
-        """
-        Analyze frame sharpness
-        
-        Args:
-            frame: Input frame
-            
-        Returns:
-            Sharpness score (higher = sharper)
-        """
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        laplacian = cv2.Laplacian(gray, cv2.CV_64F)
-        sharpness = np.var(laplacian)
-        
-        return sharpness
-    
-    @staticmethod
-    def analyze_brightness(frame: np.ndarray) -> Dict:
-        """
-        Analyze frame brightness
-        
-        Args:
-            frame: Input frame
-            
-        Returns:
-            Dictionary with brightness metrics
-        """
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
-        return {
-            "mean": float(np.mean(gray)),
-            "median": float(np.median(gray)),
-            "std": float(np.std(gray)),
-            "min": int(np.min(gray)),
-            "max": int(np.max(gray))
+    def __init__(self):
+        self.quality_thresholds = {
+            'min_duration': 5.0,  # seconds
+            'max_duration': 60.0,
+            'min_resolution': (480, 270),  # 480p
+            'target_resolution': (640, 360),
+            'min_fps': 20,
+            'target_fps': 24,
+            'min_bitrate': 500,  # kbps
         }
     
-    @staticmethod
-    def analyze_color_distribution(frame: np.ndarray) -> Dict:
-        """
-        Analyze color distribution
+    def analyze_video(self, video_path: str) -> Dict:
+        """Analyze video and return quality metrics"""
+        if not os.path.exists(video_path):
+            return {'error': 'File not found', 'quality_score': 0}
         
-        Args:
-            frame: Input frame
+        try:
+            clip = VideoFileClip(video_path)
             
-        Returns:
-            Dictionary with color metrics
-        """
-        # Calculate histograms for each channel
-        b_hist = cv2.calcHist([frame], [0], None, [256], [0, 256])
-        g_hist = cv2.calcHist([frame], [1], None, [256], [0, 256])
-        r_hist = cv2.calcHist([frame], [2], None, [256], [0, 256])
-        
-        # Calculate color variance
-        b_var = np.var(frame[:, :, 0])
-        g_var = np.var(frame[:, :, 1])
-        r_var = np.var(frame[:, :, 2])
-        
-        return {
-            "blue_variance": float(b_var),
-            "green_variance": float(g_var),
-            "red_variance": float(r_var),
-            "total_variance": float(b_var + g_var + r_var)
-        }
+            # Basic metrics
+            duration = clip.duration
+            width = clip.w
+            height = clip.h
+            fps = clip.fps
+            file_size = os.path.getsize(video_path)
+            
+            # Calculate bitrate (approximate)
+            bitrate_kbps = (file_size * 8) / (duration * 1000) if duration > 0 else 0
+            
+            # Quality scoring
+            quality_score = self._calculate_quality_score(
+                duration, width, height, fps, bitrate_kbps
+            )
+            
+            # Frame analysis (sample)
+            frame_quality = self._analyze_frames(clip)
+            
+            clip.close()
+            
+            return {
+                'duration': round(duration, 2),
+                'resolution': f"{width}x{height}",
+                'width': width,
+                'height': height,
+                'fps': fps,
+                'file_size_mb': round(file_size / (1024 * 1024), 2),
+                'bitrate_kbps': round(bitrate_kbps, 2),
+                'quality_score': quality_score,
+                'frame_quality': frame_quality,
+                'passes_quality_check': quality_score >= 70
+            }
+            
+        except Exception as e:
+            return {'error': str(e), 'quality_score': 0}
     
-    @staticmethod
-    def analyze_sequence(frames: List[np.ndarray]) -> Dict:
-        """
-        Analyze entire video sequence
+    def _calculate_quality_score(self, duration: float, width: int, 
+                                 height: int, fps: float, bitrate: float) -> int:
+        """Calculate overall quality score (0-100)"""
+        score = 0
         
-        Args:
-            frames: List of frames
-            
-        Returns:
-            Dictionary with sequence metrics
-        """
-        if len(frames) == 0:
-            return {}
+        # Duration score (20 points)
+        if self.quality_thresholds['min_duration'] <= duration <= self.quality_thresholds['max_duration']:
+            score += 20
+        elif duration > 0:
+            score += 10
         
-        # Analyze complexity
-        complexities = [QualityAnalyzer.analyze_frame_complexity(f) for f in frames]
+        # Resolution score (30 points)
+        target_w, target_h = self.quality_thresholds['target_resolution']
+        min_w, min_h = self.quality_thresholds['min_resolution']
         
-        # Analyze motion
-        motion_scores = []
-        for i in range(len(frames) - 1):
-            motion = QualityAnalyzer.analyze_motion_intensity(frames[i], frames[i + 1])
-            motion_scores.append(motion)
-        
-        # Analyze sharpness
-        sharpness_scores = [QualityAnalyzer.analyze_sharpness(f) for f in frames]
-        
-        return {
-            "num_frames": len(frames),
-            "avg_complexity": float(np.mean(complexities)),
-            "max_complexity": float(np.max(complexities)),
-            "avg_motion": float(np.mean(motion_scores)) if motion_scores else 0.0,
-            "max_motion": float(np.max(motion_scores)) if motion_scores else 0.0,
-            "avg_sharpness": float(np.mean(sharpness_scores)),
-            "min_sharpness": float(np.min(sharpness_scores))
-        }
-    
-    @staticmethod
-    def recommend_settings(frame: np.ndarray) -> Dict:
-        """
-        Recommend optimal settings based on frame analysis
-        
-        Args:
-            frame: Sample frame
-            
-        Returns:
-            Dictionary with recommended settings
-        """
-        complexity = QualityAnalyzer.analyze_frame_complexity(frame)
-        brightness = QualityAnalyzer.analyze_brightness(frame)
-        
-        # Determine quality mode
-        if complexity > 0.7:
-            quality_mode = "quality"
-            fps = 60
-        elif complexity > 0.4:
-            quality_mode = "balanced"
-            fps = 30
+        if width >= target_w and height >= target_h:
+            score += 30
+        elif width >= min_w and height >= min_h:
+            score += 20
         else:
-            quality_mode = "fast"
-            fps = 24
+            score += 10
         
-        # Determine if color grading needed
-        needs_grading = brightness["mean"] < 100 or brightness["mean"] > 180
+        # FPS score (20 points)
+        if fps >= self.quality_thresholds['target_fps']:
+            score += 20
+        elif fps >= self.quality_thresholds['min_fps']:
+            score += 15
+        else:
+            score += 5
+        
+        # Bitrate score (30 points)
+        if bitrate >= 1000:  # Good quality
+            score += 30
+        elif bitrate >= self.quality_thresholds['min_bitrate']:
+            score += 20
+        else:
+            score += 10
+        
+        return min(score, 100)
+    
+    def _analyze_frames(self, clip: VideoFileClip, sample_count: int = 5) -> Dict:
+        """Analyze sample frames for quality"""
+        try:
+            duration = clip.duration
+            if duration <= 0:
+                return {'error': 'Invalid duration'}
+            
+            # Sample frames at regular intervals
+            sample_times = np.linspace(0, duration - 0.1, sample_count)
+            
+            brightness_values = []
+            contrast_values = []
+            
+            for t in sample_times:
+                frame = clip.get_frame(t)
+                
+                # Convert to grayscale for analysis
+                gray = np.mean(frame, axis=2)
+                
+                # Brightness (mean pixel value)
+                brightness = np.mean(gray)
+                brightness_values.append(brightness)
+                
+                # Contrast (standard deviation)
+                contrast = np.std(gray)
+                contrast_values.append(contrast)
+            
+            avg_brightness = np.mean(brightness_values)
+            avg_contrast = np.mean(contrast_values)
+            
+            # Quality assessment
+            brightness_quality = "good" if 50 <= avg_brightness <= 200 else "poor"
+            contrast_quality = "good" if avg_contrast > 20 else "poor"
+            
+            return {
+                'avg_brightness': round(float(avg_brightness), 2),
+                'avg_contrast': round(float(avg_contrast), 2),
+                'brightness_quality': brightness_quality,
+                'contrast_quality': contrast_quality,
+                'samples_analyzed': sample_count
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    def generate_quality_report(self, video_path: str) -> str:
+        """Generate formatted quality report"""
+        metrics = self.analyze_video(video_path)
+        
+        if 'error' in metrics:
+            return f"❌ Error analyzing video: {metrics['error']}"
+        
+        report = []
+        report.append("=" * 60)
+        report.append("VIDEO QUALITY REPORT")
+        report.append("=" * 60)
+        report.append(f"File: {os.path.basename(video_path)}")
+        report.append("")
+        report.append("Basic Metrics:")
+        report.append(f"  Duration: {metrics['duration']}s")
+        report.append(f"  Resolution: {metrics['resolution']}")
+        report.append(f"  FPS: {metrics['fps']}")
+        report.append(f"  File Size: {metrics['file_size_mb']} MB")
+        report.append(f"  Bitrate: {metrics['bitrate_kbps']} kbps")
+        report.append("")
+        
+        if 'frame_quality' in metrics and 'error' not in metrics['frame_quality']:
+            fq = metrics['frame_quality']
+            report.append("Frame Quality:")
+            report.append(f"  Brightness: {fq['avg_brightness']} ({fq['brightness_quality']})")
+            report.append(f"  Contrast: {fq['avg_contrast']} ({fq['contrast_quality']})")
+            report.append("")
+        
+        # Overall score
+        score = metrics['quality_score']
+        status = "✅ PASS" if metrics['passes_quality_check'] else "⚠️  NEEDS IMPROVEMENT"
+        
+        report.append(f"Quality Score: {score}/100 {status}")
+        report.append("=" * 60)
+        
+        return "\n".join(report)
+    
+    def batch_analyze(self, video_paths: list) -> Dict:
+        """Analyze multiple videos and return summary"""
+        results = []
+        
+        for path in video_paths:
+            metrics = self.analyze_video(path)
+            metrics['filename'] = os.path.basename(path)
+            results.append(metrics)
+        
+        # Calculate averages
+        valid_results = [r for r in results if 'error' not in r]
+        
+        if not valid_results:
+            return {'error': 'No valid videos analyzed'}
+        
+        avg_score = np.mean([r['quality_score'] for r in valid_results])
+        avg_duration = np.mean([r['duration'] for r in valid_results])
+        pass_rate = (sum(1 for r in valid_results if r['passes_quality_check']) / len(valid_results)) * 100
         
         return {
-            "quality_mode": quality_mode,
-            "recommended_fps": fps,
-            "complexity_score": complexity,
-            "needs_color_grading": needs_grading,
-            "brightness_ok": 100 <= brightness["mean"] <= 180
+            'total_analyzed': len(video_paths),
+            'valid_videos': len(valid_results),
+            'avg_quality_score': round(avg_score, 1),
+            'avg_duration': round(avg_duration, 2),
+            'pass_rate': round(pass_rate, 1),
+            'results': results
         }
+
+
+# Global instance
+analyzer = QualityAnalyzer()
+
+
+if __name__ == "__main__":
+    print("Quality Analyzer Test")
+    print("=" * 60)
+    
+    # Test with a video file
+    test_video = "outputs/videos/test.mp4"
+    
+    if os.path.exists(test_video):
+        print(analyzer.generate_quality_report(test_video))
+    else:
+        print("No test video found")
+        print("\nQuality Thresholds:")
+        for key, value in analyzer.quality_thresholds.items():
+            print(f"  {key}: {value}")
