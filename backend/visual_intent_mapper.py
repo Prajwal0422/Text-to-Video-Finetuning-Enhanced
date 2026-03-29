@@ -161,6 +161,7 @@ class VisualIntentMapper:
     def generate_visual_queries(self, prompt: str, max_queries: int = 5) -> List[str]:
         """
         Main method: Convert prompt into 5 semantic visual search queries
+        FIXED: Now keeps original prompt as primary query
         
         Args:
             prompt: User's text prompt
@@ -184,34 +185,32 @@ class VisualIntentMapper:
         queries = []
         used_queries = set()
         
-        # Expand each concept
-        for concept in concepts[:3]:  # Use top 3 concepts
+        # FIRST: Add the original prompt as the primary query
+        # This ensures we search for exactly what the user asked for
+        original_query = ' '.join(prompt.lower().split()[:8])  # Use first 8 words
+        queries.append(original_query)
+        used_queries.add(original_query)
+        print(f"Primary query: '{original_query}'")
+        
+        # SECOND: Add concept-based variations for better coverage
+        for concept in concepts[:2]:  # Use top 2 concepts
             expansions = self.expand_concept(concept)
-            for expansion in expansions:
-                if expansion not in used_queries:
+            for expansion in expansions[:2]:  # Take first 2 expansions per concept
+                if expansion not in used_queries and len(queries) < max_queries:
                     queries.append(expansion)
                     used_queries.add(expansion)
-                    if len(queries) >= max_queries:
-                        break
-            if len(queries) >= max_queries:
-                break
         
-        # If not enough queries, add fallback based on theme
+        # THIRD: Add keyword combinations from the original prompt
+        if len(concepts) >= 2 and len(queries) < max_queries:
+            keyword_combo = ' '.join(concepts[:3])
+            if keyword_combo not in used_queries:
+                queries.append(keyword_combo)
+                used_queries.add(keyword_combo)
+        
+        # FOURTH: If not enough queries, add fallback based on theme
         if len(queries) < max_queries and primary_theme in self.fallback_themes:
             fallbacks = self.fallback_themes[primary_theme]
             for fallback in fallbacks:
-                if fallback not in used_queries and len(queries) < max_queries:
-                    queries.append(fallback)
-                    used_queries.add(fallback)
-        
-        # Ensure we have at least 3 queries
-        if len(queries) < 3:
-            generic_fallbacks = [
-                'cinematic landscape scenic',
-                'dramatic atmosphere motion',
-                'nature environment outdoor'
-            ]
-            for fallback in generic_fallbacks:
                 if fallback not in used_queries and len(queries) < max_queries:
                     queries.append(fallback)
                     used_queries.add(fallback)
@@ -228,22 +227,31 @@ class VisualIntentMapper:
     def map_prompt_to_scenes(self, prompt: str) -> List[Dict]:
         """
         Convert prompt into scene objects with visual queries
+        FIXED: Now uses original prompt as primary query
         
         Returns:
             List of scene dictionaries with visual queries
         """
-        # Generate visual queries
+        # Generate visual queries (first one is the original prompt)
         visual_queries = self.generate_visual_queries(prompt, max_queries=5)
         
         # Create scenes (use first 3 queries for 3 scenes)
         scenes = []
         for i, query in enumerate(visual_queries[:3], 1):
+            # For the first scene, use the full original prompt
+            if i == 1:
+                scene_query = prompt  # Use full original prompt
+                keywords = self.extract_key_concepts(prompt)[:5]
+            else:
+                scene_query = query
+                keywords = query.split()[:4]
+            
             scene = {
                 'id': i,
-                'query': query,
-                'keywords': query.split()[:4],  # First 4 words as keywords
+                'query': scene_query,
+                'keywords': keywords,
                 'duration': 4.0,  # 4 seconds per scene
-                'description': f"Scene {i}: {query}"
+                'description': f"Scene {i}: {scene_query}"
             }
             scenes.append(scene)
         
