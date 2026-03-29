@@ -133,20 +133,52 @@ class VisualIntentMapper:
         return 'nature'  # Default fallback
     
     def extract_key_concepts(self, prompt: str) -> List[str]:
-        """Extract key concepts from prompt"""
+        """Extract key concepts from prompt with priority ranking"""
         # Remove common words
         stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
                      'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
                      'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-                     'should', 'could', 'may', 'might', 'must', 'can', 'that', 'this'}
+                     'should', 'could', 'may', 'might', 'must', 'can', 'that', 'this',
+                     'doing', 'live', 'two'}  # Added weak words
+        
+        # High-priority keywords (visual/action words)
+        priority_keywords = {
+            'war', 'battle', 'soldiers', 'military', 'combat', 'army', 'conflict',
+            'fighting', 'troops', 'struggle', 'struggling',
+            'sunset', 'sunrise', 'ocean', 'mountains', 'forest', 'beach', 'sky',
+            'city', 'traffic', 'street', 'urban', 'downtown',
+            'running', 'flying', 'driving', 'walking', 'moving',
+            'rain', 'storm', 'clouds', 'snow', 'fire', 'smoke',
+            'people', 'crowd', 'person', 'man', 'woman', 'child'
+        }
         
         # Extract words
         words = re.findall(r'\b[a-z]+\b', prompt.lower())
         
-        # Filter and return meaningful words
-        concepts = [w for w in words if w not in stop_words and len(w) > 3]
+        # Separate priority and regular concepts
+        priority_concepts = []
+        regular_concepts = []
         
-        return concepts[:10]  # Limit to top 10
+        for word in words:
+            if word in stop_words or len(word) <= 3:
+                continue
+            if word in priority_keywords:
+                priority_concepts.append(word)
+            else:
+                regular_concepts.append(word)
+        
+        # Combine: priority first, then regular
+        concepts = priority_concepts + regular_concepts
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_concepts = []
+        for concept in concepts:
+            if concept not in seen:
+                seen.add(concept)
+                unique_concepts.append(concept)
+        
+        return unique_concepts[:10]  # Limit to top 10
     
     def expand_concept(self, concept: str) -> List[str]:
         """Expand a single concept into visual search queries"""
@@ -169,7 +201,7 @@ class VisualIntentMapper:
     def generate_visual_queries(self, prompt: str, max_queries: int = 5) -> List[str]:
         """
         Main method: Convert prompt into 5 semantic visual search queries
-        FIXED: Now keeps original prompt as primary query
+        FIXED: Now keeps original prompt as primary query and uses priority keywords
         
         Args:
             prompt: User's text prompt
@@ -185,22 +217,28 @@ class VisualIntentMapper:
         primary_theme = self.detect_primary_theme(prompt)
         print(f"Primary theme: {primary_theme}")
         
-        # Extract key concepts
+        # Extract key concepts (now prioritized)
         concepts = self.extract_key_concepts(prompt)
-        print(f"Key concepts: {concepts}")
+        print(f"Key concepts (prioritized): {concepts}")
         
         # Generate queries
         queries = []
         used_queries = set()
         
-        # FIRST: Add the original prompt as the primary query
-        # This ensures we search for exactly what the user asked for
-        original_query = ' '.join(prompt.lower().split()[:8])  # Use first 8 words
-        queries.append(original_query)
-        used_queries.add(original_query)
-        print(f"Primary query: '{original_query}'")
+        # FIRST: Create a query from top priority keywords only
+        if len(concepts) >= 2:
+            priority_query = ' '.join(concepts[:3])  # Top 3 priority keywords
+            queries.append(priority_query)
+            used_queries.add(priority_query)
+            print(f"Priority query: '{priority_query}'")
         
-        # SECOND: Add concept-based variations for better coverage
+        # SECOND: Add the original prompt (shortened if too long)
+        original_query = ' '.join(prompt.lower().split()[:8])  # Use first 8 words
+        if original_query not in used_queries:
+            queries.append(original_query)
+            used_queries.add(original_query)
+        
+        # THIRD: Add concept-based variations for better coverage
         for concept in concepts[:2]:  # Use top 2 concepts
             expansions = self.expand_concept(concept)
             for expansion in expansions[:2]:  # Take first 2 expansions per concept
@@ -208,14 +246,18 @@ class VisualIntentMapper:
                     queries.append(expansion)
                     used_queries.add(expansion)
         
-        # THIRD: Add keyword combinations from the original prompt
-        if len(concepts) >= 2 and len(queries) < max_queries:
-            keyword_combo = ' '.join(concepts[:3])
-            if keyword_combo not in used_queries:
-                queries.append(keyword_combo)
-                used_queries.add(keyword_combo)
+        # FOURTH: Add keyword combinations from the original prompt
+        if len(concepts) >= 3 and len(queries) < max_queries:
+            # Try different combinations
+            combo1 = ' '.join(concepts[:2])
+            combo2 = ' '.join([concepts[0], concepts[2]]) if len(concepts) > 2 else None
+            
+            for combo in [combo1, combo2]:
+                if combo and combo not in used_queries and len(queries) < max_queries:
+                    queries.append(combo)
+                    used_queries.add(combo)
         
-        # FOURTH: If not enough queries, add fallback based on theme
+        # FIFTH: If not enough queries, add fallback based on theme
         if len(queries) < max_queries and primary_theme in self.fallback_themes:
             fallbacks = self.fallback_themes[primary_theme]
             for fallback in fallbacks:
