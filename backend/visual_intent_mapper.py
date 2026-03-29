@@ -11,15 +11,23 @@ class VisualIntentMapper:
     def __init__(self):
         # Semantic expansion database
         self.semantic_expansions = {
-            # War & Military
-            'war': ['military battlefield smoke', 'soldiers combat action', 'war tanks explosion', 
-                   'army conflict destruction', 'military vehicles desert'],
+            # War & Military - IMPROVED
+            'war': ['war military combat', 'soldiers battle action', 'military conflict warfare', 
+                   'army troops fighting', 'combat zone battlefield'],
             'battle': ['soldiers fighting combat', 'military action warfare', 'battlefield smoke fire',
                       'army troops conflict', 'war zone destruction'],
-            'soldiers': ['military troops uniform', 'army personnel combat', 'soldiers marching training',
-                        'military forces action', 'troops battlefield'],
+            'soldiers': ['military troops uniform', 'army soldiers combat', 'soldiers marching training',
+                        'military forces action', 'troops battlefield war'],
             'military': ['army forces vehicles', 'military training exercise', 'soldiers uniform march',
                         'defense forces action', 'military base operations'],
+            'combat': ['military combat action', 'soldiers fighting battle', 'combat warfare troops',
+                      'military action combat', 'battle combat soldiers'],
+            'army': ['military army troops', 'soldiers army uniform', 'army forces military',
+                    'military personnel army', 'army soldiers marching'],
+            'conflict': ['military conflict war', 'soldiers conflict battle', 'war conflict troops',
+                        'military action conflict', 'conflict warfare soldiers'],
+            'struggling': ['difficult challenge effort', 'hardship adversity tough', 'struggle survival action',
+                          'challenging difficult scene', 'effort struggle motion'],
             
             # Nature & Landscapes
             'sunset': ['golden hour sky clouds', 'sunset horizon landscape', 'evening sky colors',
